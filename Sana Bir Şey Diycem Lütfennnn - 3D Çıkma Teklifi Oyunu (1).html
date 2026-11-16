@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sana Bir Şey Diycem Lütfennnn ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #05030a;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #fff;
+        }
+        .font-romantic {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .font-epic {
+            font-family: 'Cinzel Decorative', serif;
+        }
+        #canvas-container {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .glass {
+            background: rgba(13, 9, 25, 0.64);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 195, 220, 0.24);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.62);
+        }
+        .glass-input {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 192, 215, 0.28);
+            color: #fff;
+            user-select: text;
+            -webkit-user-select: text;
+        }
+        .glass-input:focus {
+            outline: none;
+            border-color: #ff4d88;
+            background: rgba(255, 255, 255, 0.14);
+        }
+        .text-glow-pink {
+            text-shadow: 0 0 24px rgba(255, 95, 158, 0.9), 0 0 48px rgba(255, 46, 99, 0.55);
+        }
+        .text-glow-gold {
+            text-shadow: 0 0 25px rgba(255, 214, 102, 0.95), 0 0 55px rgba(255, 159, 28, 0.6);
+        }
+        .btn-love {
+            background: linear-gradient(135deg, #ff2e63 0%, #ff5c8a 52%, #ff9ebb 100%);
+            box-shadow: 0 0 28px rgba(255, 46, 99, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.65);
+            transition: transform 0.22s ease, box-shadow 0.22s ease;
+        }
+        .btn-love:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 0 40px rgba(255, 46, 99, 0.98);
+        }
+        .btn-love:active {
+            transform: scale(0.97);
+        }
+        @keyframes pulseBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.045); }
+        }
+        .pulse-beat {
+            animation: pulseBeat 2.1s infinite ease-in-out;
+        }
+        @keyframes wordDramaticPop {
+            0% { opacity: 0; transform: scale(0.55) translateY(24px); letter-spacing: 0.35em; filter: blur(8px); }
+            25% { opacity: 1; transform: scale(1.06) translateY(0); letter-spacing: 0.14em; filter: blur(0px); }
+            82% { opacity: 1; transform: scale(1) translateY(0); letter-spacing: 0.12em; }
+            100% { opacity: 0; transform: scale(0.94) translateY(-18px); letter-spacing: 0.18em; }
+        }
+        .animate-word-reveal {
+            animation: wordDramaticPop 4.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .word-pill {
+            transition: all 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .word-pill.unlocked {
+            background: linear-gradient(135deg, rgba(255, 46, 99, 0.45), rgba(255, 209, 102, 0.35));
+            border-color: rgba(255, 214, 102, 0.75);
+            color: #fff;
+            transform: scale(1.08);
+            box-shadow: 0 0 18px rgba(255, 110, 160, 0.6);
+        }
+        .word-pill.active-target {
+            border-color: rgba(255, 209, 102, 0.65);
+            color: #ffe5a3;
+            animation: pulseBeat 1.6s infinite ease-in-out;
+        }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 8px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,115,160,0.5); border-radius: 8px; }
+
+        /* Virtual Touch Joystick */
+        #joystick-zone {
+            position: fixed;
+            bottom: 24px;
+            left: 22px;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1.5px solid rgba(255, 195, 215, 0.38);
+            z-index: 30;
+            display: none;
+        }
+        #joystick-knob {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 44px;
+            height: 44px;
+            margin: -22px 0 0 -22px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffd6e0, #ff2e63);
+            box-shadow: 0 0 18px rgba(255, 46, 99, 0.85);
+            pointer-events: none;
+        }
+        @media (pointer: coarse), (max-width: 768px) {
+            #joystick-zone.show-mobile { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <!-- TOP HUD: SENTENCE BUILDER + CONTROLS -->
+    <div id="hud-top" class="fixed top-3 left-3 right-3 z-30 flex flex-col gap-2 pointer-events-none opacity-0 transition-opacity duration-500">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+            <!-- Zone Indicator -->
+            <div class="glass px-3.5 py-1.5 rounded-full flex items-center gap-2 pointer-events-auto">
+                <span class="w-2 h-2 rounded-full bg-amber-300 animate-ping"></span>
+                <span id="zone-badge" class="text-[11px] sm:text-xs font-semibold text-amber-200 tracking-wide">1. Altın Gün Batımı & Kiraz Çiçekleri</span>
+            </div>
+
+            <!-- Utility Controls -->
+            <div class="flex items-center gap-1.5 pointer-events-auto">
+                <button id="btn-cam-mode" class="glass px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-medium text-pink-100 hover:bg-white/10 transition cursor-pointer">
+                    Kamera: 1. Şahıs
+                </button>
+                <button id="btn-autowalk" class="glass px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-medium text-pink-100 hover:bg-white/10 transition flex items-center gap-1.5 cursor-pointer">
+                    <span id="autowalk-dot" class="w-2 h-2 rounded-full bg-pink-300"></span>
+                    <span id="autowalk-text">Oto-Yürü</span>
+                </button>
+                <button id="btn-gfx" class="glass px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-medium text-emerald-200 hover:bg-white/10 transition cursor-pointer">
+                    Grafik: Ultra
+                </button>
+                <button id="btn-sound" class="glass p-1.5 rounded-full text-pink-100 hover:bg-white/10 transition cursor-pointer" title="Sesi Aç/Kapat">
+                    <svg id="ico-sound-on" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/>
+                    </svg>
+                    <svg id="ico-sound-off" class="w-4 h-4 sm:w-5 sm:h-5 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- 5-WORD SEQUENTIAL SENTENCE PROGRESS BAR -->
+        <div class="mx-auto glass px-3 sm:px-5 py-2 rounded-full flex items-center justify-center gap-1.5 sm:gap-2.5 pointer-events-auto max-w-full overflow-x-auto">
+            <span id="pill-0" class="word-pill active-target px-2.5 sm:px-3.5 py-1 rounded-full border border-white/15 text-xs sm:text-sm font-bold text-white/45 tracking-wide">1. Sana</span>
+            <span class="text-pink-300/40 text-xs">✦</span>
+            <span id="pill-1" class="word-pill px-2.5 sm:px-3.5 py-1 rounded-full border border-white/15 text-xs sm:text-sm font-bold text-white/35 tracking-wide">2. Bir</span>
+            <span class="text-pink-300/40 text-xs">✦</span>
+            <span id="pill-2" class="word-pill px-2.5 sm:px-3.5 py-1 rounded-full border border-white/15 text-xs sm:text-sm font-bold text-white/35 tracking-wide">3. Şey</span>
+            <span class="text-pink-300/40 text-xs">✦</span>
+            <span id="pill-3" class="word-pill px-2.5 sm:px-3.5 py-1 rounded-full border border-white/15 text-xs sm:text-sm font-bold text-white/35 tracking-wide">4. Diycem</span>
+            <span class="text-pink-300/40 text-xs">✦</span>
+            <span id="pill-4" class="word-pill px-2.5 sm:px-3.5 py-1 rounded-full border border-white/15 text-xs sm:text-sm font-bold text-white/35 tracking-wide">5. Lütfennnn</span>
+        </div>
+    </div>
+
+    <!-- DRAMATIC CENTER-SCREEN WORD & LOVE LETTER REVEAL OVERLAY -->
+    <div id="dramatic-reveal" class="fixed inset-0 z-20 flex flex-col items-center justify-center px-4 pointer-events-none hidden">
+        <div id="reveal-inner" class="text-center max-w-2xl">
+            <div id="reveal-step-tag" class="text-xs sm:text-sm uppercase tracking-[0.35em] text-amber-200 font-semibold mb-2"></div>
+    <!-- DRAMATIC CENTER-SCREEN WORD REVEAL OVERLAY (ONLY SINGLE WORD, NO EXTRA TEXT) -->
+    <div id="dramatic-reveal" class="fixed inset-0 z-20 flex flex-col items-center justify-center px-4 pointer-events-none hidden">
+        <div id="reveal-inner" class="text-center max-w-2xl">
+            <h2 id="reveal-big-word" class="font-epic text-6xl sm:text-8xl md:text-9xl font-black text-white text-glow-gold"></h2>
+        </div>
+    </div>
+
+    <!-- LOCKED ORB HINT TOAST -->
+    <div id="lock-toast" class="fixed top-28 left-1/2 -translate-x-1/2 z-30 pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="glass px-5 py-2 rounded-full text-xs sm:text-sm text-amber-200 border-amber-300/40">
+            🔒 Önce sıradaki ışık küresini toplamalısın!
+        </div>
+    </div>
+
+    <!-- INTERACTIVE ACTION BUTTONS (WISH LANTERN & SHOOTING STAR) -->
+    <div class="fixed bottom-20 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2.5">
+        <button id="btn-wish-lantern" class="hidden glass px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-amber-200 border-amber-300/50 hover:bg-amber-400/20 transition cursor-pointer shadow-lg">
+            🏮 Dilek Feneri Uçur [E]
+        </button>
+        <button id="btn-shooting-star" class="hidden glass px-4 py-2 rounded-full text-xs font-medium text-pink-100 border-pink-300/35 hover:bg-pink-500/20 transition cursor-pointer">
+            🌠 Yıldız Kaydır
+        </button>
+    </div>
+
+    <!-- BOTTOM CONTROLS HINT -->
+    <div id="controls-hint" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none opacity-0 transition-opacity duration-500 text-center w-full px-4">
+        <div class="glass px-4 py-1.5 rounded-full text-[11px] text-pink-100/85 inline-block">
+            <span class="hidden md:inline">Yürü: <b>W A S D</b> / <b>Oklar</b> • Koş: <b>Shift</b> • Etrafa Bak: <b>Fareyi Sürükle</b> • Altın ışık sütununu takip et ✨</span>
+            <span class="md:hidden">Sol joystick ile yürü • Ekrana dokunup kaydırarak etrafa bak ✨</span>
+        </div>
+    </div>
+
+    <!-- MOBILE VIRTUAL JOYSTICK -->
+    <div id="joystick-zone"><div id="joystick-knob"></div></div>
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm transition-opacity duration-700">
+        <div class="glass rounded-3xl p-7 sm:p-10 max-w-lg w-full text-center relative border-pink-300/30">
+            <button id="btn-open-custom" class="absolute top-4 right-4 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-medium text-pink-100 flex items-center gap-1.5 transition cursor-pointer">
+                <span>Özelleştir & Link Oluştur</span>
+                <span>⚙️</span>
+            </button>
+
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-tr from-pink-500/35 to-amber-300/35 border border-amber-200/45 flex items-center justify-center text-3xl shadow-lg">
+                💌
+            </div>
+
+            <div id="start-from-badge" class="hidden text-xs uppercase tracking-[0.25em] text-amber-200 mb-2 font-semibold"></div>
+
+            <h1 id="start-title" class="font-romantic text-4xl sm:text-5xl font-bold text-white text-glow-pink mb-3 leading-tight">
+                Sana Bir Şey Diycem Lütfennnn...
+            </h1>
+            <p class="text-pink-100/85 text-sm sm:text-base leading-relaxed mb-7">
+                Yol boyunca parlayan <b>5 kristal küreyi</b> sırayla topla. Her küre kalbimdeki bir kelimeyi gökyüzüne yazacak ve seni hayatımın en özel sorusuna götürecek...
+            </p>
+
+            <button id="btn-start" class="btn-love pulse-beat w-full py-4 px-8 rounded-full text-white font-bold text-base sm:text-lg tracking-wide cursor-pointer">
+                Yolculuğa Başla ❤️
+            </button>
+            <p class="text-[11px] text-pink-200/65 mt-4">En büyüleyici deneyim için sesi açık tut 🌊🎹</p>
+        </div>
+    </div>
+
+    <!-- CUSTOMIZATION & SHAREABLE LINK MODAL -->
+    <div id="custom-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-md">
+        <div class="glass rounded-3xl p-6 sm:p-8 max-w-md w-full flex flex-col">
+            <div class="text-center mb-4">
+                <h2 class="font-romantic text-3xl font-bold text-white">Teklifi Ona Özel Yap ✨</h2>
+                <p class="text-xs text-pink-100/75 mt-1">Adını yazıp ona göndereceğin özel linki kopyalayabilirsin.</p>
+            </div>
+
+            <div class="space-y-3 text-left">
+                <div>
+                    <label class="block text-[11px] uppercase tracking-wider text-pink-200 mb-1">Kızın Adı</label>
+                    <input id="inp-to" type="text" maxlength="24" placeholder="Örn: Elif" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] uppercase tracking-wider text-amber-200 mb-1">Final Sorusu</label>
+                    <input id="inp-question" type="text" maxlength="75" placeholder="Benimle Çıkar Mısın? ❤️" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-sm">
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 rounded-xl bg-black/45 border border-pink-300/25">
+                <p class="text-[11px] text-amber-200 mb-1">Ona göndereceğin özel bağlantı:</p>
+                <div class="flex items-center gap-2">
+                    <input id="share-link-box" type="text" readonly class="w-full bg-transparent text-xs text-pink-100 focus:outline-none select-all">
+                    <button id="btn-copy-url" class="px-3.5 py-1.5 rounded-lg bg-pink-500/60 hover:bg-pink-500/90 text-xs font-semibold text-white shrink-0 cursor-pointer transition">Kopyala</button>
+                </div>
+                <p id="copy-msg" class="text-[11px] text-emerald-300 mt-1 hidden">Özel bağlantı kopyalandı! ❤️</p>
+            </div>
+
+            <div class="flex gap-3 mt-5">
+                <button id="btn-close-custom" class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-sm font-medium cursor-pointer">İptal</button>
+                <button id="btn-apply-custom" class="flex-1 py-2.5 rounded-xl btn-love text-sm font-semibold cursor-pointer">Kaydet ve Uygula</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRAND FINALE PROPOSAL PROMPT (CLEAN: ONLY QUESTION + YES/NO) -->
+    <div id="proposal-overlay" class="fixed inset-0 z-40 hidden flex-col items-center justify-end pb-7 sm:pb-11 px-4 pointer-events-none">
+        <div id="proposal-card" class="glass rounded-3xl p-6 sm:p-9 max-w-lg w-full text-center pointer-events-auto transform translate-y-10 opacity-0 transition-all duration-700 border-amber-300/45">
+            <h2 id="prop-question" class="font-romantic text-4xl sm:text-5xl font-bold text-white text-glow-pink mb-6 leading-tight">
+                Benimle Çıkar Mısın? ❤️
+            </h2>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 relative min-h-[68px]">
+                <button id="btn-yes" class="btn-love pulse-beat px-10 py-4 rounded-full text-white font-bold text-lg sm:text-xl tracking-wide cursor-pointer z-10 w-full sm:w-auto transition-transform duration-200">
+                    Evet ❤️
+                </button>
+                <button id="btn-no" class="px-7 py-3 rounded-full bg-white/10 hover:bg-white/15 border border-white/25 text-pink-100/85 text-sm font-medium transition-all duration-150 cursor-pointer">
+                    Hayır 🙈
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CELEBRATION KEEPSAKE CARD -->
+    <div id="celebration-overlay" class="fixed inset-0 z-40 hidden flex-col items-center justify-end pb-7 sm:pb-11 px-4 pointer-events-none">
+        <div id="celebration-card" class="glass rounded-3xl p-6 sm:p-8 max-w-lg w-full text-center pointer-events-auto transform scale-90 opacity-0 transition-all duration-700 border-amber-300/55">
+            <div class="text-3xl mb-2">🖤🌹🍫💍❤️</div>
+            <h2 id="celeb-title" class="font-romantic text-4xl sm:text-5xl font-bold text-white text-glow-pink mb-4">
+                EVET! ❤️
+            </h2>
+
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <button id="btn-more-fw" class="px-5 py-2.5 rounded-full bg-white/15 hover:bg-white/25 border border-pink-300/40 text-xs sm:text-sm font-medium text-white cursor-pointer">
+                    Havai Fişek Gönder 🎆
+                </button>
+                <button id="btn-toggle-celeb" class="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-xs sm:text-sm text-pink-100 cursor-pointer">
+                    Siyah Gül & Laviva'yı İzle ✨
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CELEBRATION KEEPSAKE CARD -->
+    <div id="celebration-overlay" class="fixed inset-0 z-40 hidden flex-col items-center justify-end pb-7 sm:pb-11 px-4 pointer-events-none">
+        <div id="celebration-card" class="glass rounded-3xl p-6 sm:p-9 max-w-lg w-full text-center pointer-events-auto transform scale-90 opacity-0 transition-all duration-700 border-amber-300/55">
+            <div class="text-3xl mb-2">🎆💍❤️🥂</div>
+            <h2 id="celeb-title" class="font-romantic text-4xl sm:text-5xl font-bold text-white text-glow-pink mb-2">
+                Artık Biziz! ❤️
+            </h2>
+            <p id="celeb-note" class="text-pink-100 text-sm sm:text-base mb-2 leading-relaxed"></p>
+            <p id="celeb-date" class="text-amber-200 text-xs tracking-widest uppercase mb-5 font-semibold"></p>
+
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <button id="btn-more-fw" class="px-5 py-2.5 rounded-full bg-white/15 hover:bg-white/25 border border-pink-300/40 text-xs sm:text-sm font-medium text-white cursor-pointer">
+                    Havai Fişek Gönder 🎆
+                </button>
+                <button id="btn-toggle-celeb" class="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-xs sm:text-sm text-pink-100 cursor-pointer">
+                    Manzarayı İzle ✨
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <button id="btn-restore-celeb" class="fixed bottom-4 right-4 z-40 hidden glass px-4 py-2 rounded-full text-xs text-pink-100 hover:bg-white/15 cursor-pointer">
+        Hatıra Kartını Göster ❤️
+    </button>
+
+    <script>
+    (function () {
+        'use strict';
+
+        // ============================================================
+        // 1. 5 SEQUENTIAL WORDS & PERSONALIZATION CONFIGURATION
+        // ============================================================
+        const ORB_WORDS = ["Sana", "Bir", "Şey", "Diycem", "Lütfennnn"];
+        const ORB_WORDS_UPPER = ["SANA", "BİR", "ŞEY", "DİYCEM", "LÜTFENNNN"];
+
+        const CONFIG = {
+            toName: '',
+            question: ''
+        };
+
+        function encodePayload(obj) {
+            const bytes = new TextEncoder().encode(JSON.stringify(obj));
+            let bin = '';
+            for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+            return btoa(bin);
+        }
+
+        function decodePayload(str) {
+            const bin = atob(str);
+            const bytes = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+            return JSON.parse(new TextDecoder().decode(bytes));
+        }
+
+        function loadFromURL() {
+            try {
+                const hash = window.location.hash.replace(/^#/, '');
+                const params = new URLSearchParams(hash || window.location.search);
+                const d = params.get('d');
+                if (d) {
+                    const parsed = decodePayload(d);
+                    if (parsed.to) CONFIG.toName = parsed.to;
+                    if (parsed.q) CONFIG.question = parsed.q;
+                }
+            } catch (_) {}
+        }
+        loadFromURL();
+
+        function applyPersonalization() {
+            const titleEl = document.getElementById('start-title');
+            const propQEl = document.getElementById('prop-question');
+            const celebTitleEl = document.getElementById('celeb-title');
+
+            if (CONFIG.toName) {
+                titleEl.textContent = `${CONFIG.toName}, Sana Bir Şey Diycem Lütfennnn...`;
+                propQEl.textContent = CONFIG.question || `${CONFIG.toName}, Benimle Çıkar Mısın? ❤️`;
+                celebTitleEl.textContent = `${CONFIG.toName} ❤️`;
+            } else {
+                titleEl.textContent = 'Sana Bir Şey Diycem Lütfennnn...';
+                propQEl.textContent = CONFIG.question || 'Benimle Çıkar Mısın? ❤️';
+                celebTitleEl.textContent = 'EVET! ❤️';
+            }
+        }
+        applyPersonalization();
+
+        // ============================================================
+        // 2. GAME STATE & 60 FPS ADAPTIVE GOVERNOR
+        // ============================================================
+        const STATE = {
+            started: false,
+            autoWalk: false,
+            thirdPerson: false,
+            proposalReached: false,
+            saidYes: false,
+            muted: false,
+            qualityMode: 'ultra',
+            currentZone: 0,
+            activeOrbIndex: 0, // Strict sequential order: 0 -> 1 -> 2 -> 3 -> 4
+            gateOpenProgress: 0,
+            ringBoxOpen: 0,
+            noCount: 0,
+            yesScale: 1,
+            revealTimer: null,
+            lockToastTimer: null
+        };
+
+        // ============================================================
+        // 3. SYNTHESIZED GRAND PIANO & OCEAN WEB AUDIO ENGINE
+        // ============================================================
+        class SoundEngine {
+            constructor() {
+                this.ctx = null;
+                this.master = null;
+                this.running = false;
+                this.stepAccum = 0;
+                this.noteIdx = 0;
+                this.chordIdx = 0;
+                // Emotional progression building from Cmaj7 -> Am9 -> Fmaj7 -> G6 -> Cmaj9
+                this.chords = [
+                    [261.63, 329.63, 392.00, 493.88], // Cmaj7
+                    [220.00, 261.63, 329.63, 493.88], // Am9
+                    [174.61, 220.00, 261.63, 329.63], // Fmaj7
+                    [196.00, 246.94, 293.66, 329.63], // G6
+                    [261.63, 329.63, 392.00, 587.33]  // Cmaj9
+                ];
+            }
+
+            init() {
+                if (this.ctx) return;
+                const AC = window.AudioContext || window.webkitAudioContext;
+                this.ctx = new AC();
+                this.master = this.ctx.createGain();
+                this.master.gain.value = 0.36;
+                this.master.connect(this.ctx.destination);
+                this.startOcean();
+                this.startPiano();
+            }
+
+            setMute(m) {
+                if (!this.ctx) return;
+                this.master.gain.setTargetAtTime(m ? 0 : 0.36, this.ctx.currentTime, 0.15);
+            }
+
+            startOcean() {
+                const len = this.ctx.sampleRate * 3;
+                const buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+                const data = buf.getChannelData(0);
+                let last = 0;
+                for (let i = 0; i < len; i++) {
+                    const w = Math.random() * 2 - 1;
+                    data[i] = (last + 0.02 * w) / 1.02;
+                    last = data[i];
+                    data[i] *= 2.4;
+                }
+                const src = this.ctx.createBufferSource();
+                src.buffer = buf;
+                src.loop = true;
+
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 250;
+
+                const gain = this.ctx.createGain();
+                gain.gain.value = 0.075;
+
+                const lfo = this.ctx.createOscillator();
+                lfo.frequency.value = 0.13;
+                const lfoGain = this.ctx.createGain();
+                lfoGain.gain.value = 0.04;
+                lfo.connect(lfoGain);
+                lfoGain.connect(gain.gain);
+
+                src.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.master);
+                src.start();
+                lfo.start();
+            }
+
+            playNote(freq, dur = 2.9, vol = 0.10) {
+                if (!this.ctx || STATE.muted) return;
+                const t = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const over = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                over.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, t);
+                over.frequency.setValueAtTime(freq * 2, t);
+
+                const overG = this.ctx.createGain();
+                overG.gain.value = 0.11;
+
+                gain.gain.setValueAtTime(0.0001, t);
+                gain.gain.linearRampToValueAtTime(vol, t + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+
+                osc.connect(gain);
+                over.connect(overG);
+                overG.connect(gain);
+                gain.connect(this.master);
+
+                osc.start(t);
+                over.start(t);
+                osc.stop(t + dur + 0.05);
+                over.stop(t + dur + 0.05);
+            }
+
+            startPiano() {
+                if (this.running) return;
+                this.running = true;
+                const loop = () => {
+                    if (!this.running) return;
+                    const maxChords = Math.min(this.chords.length, STATE.activeOrbIndex + 2);
+                    const chord = this.chords[this.chordIdx % maxChords];
+                    const f = chord[this.noteIdx % chord.length];
+                    this.playNote(f, 3.0, 0.095);
+                    if (this.noteIdx === 0) this.playNote(chord[0] * 0.5, 4.0, 0.11);
+
+                    this.noteIdx++;
+                    if (this.noteIdx >= 4) {
+                        this.noteIdx = 0;
+                        this.chordIdx++;
+                    }
+                    setTimeout(loop, 660);
+                };
+                loop();
+            }
+
+            playStep() {
+                if (!this.ctx || STATE.muted) return;
+                const t = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const g = this.ctx.createGain();
+                osc.frequency.setValueAtTime(92 + Math.random() * 18, t);
+                osc.frequency.exponentialRampToValueAtTime(34, t + 0.07);
+                g.gain.setValueAtTime(0.055, t);
+                g.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+                osc.connect(g);
+                g.connect(this.master);
+                osc.start(t);
+                osc.stop(t + 0.09);
+            }
+
+            playWordUnlock(idx) {
+                if (!this.ctx || STATE.muted) return;
+                const chord = this.chords[idx % this.chords.length];
+                chord.forEach((f, i) => {
+                    setTimeout(() => this.playNote(f, 3.2, 0.14), i * 95);
+                });
+                setTimeout(() => this.playNote(chord[0] * 2, 3.6, 0.15), 400);
+            }
+
+            playWishLaunch() {
+                if (!this.ctx || STATE.muted) return;
+                [440, 554.37, 659.25, 880].forEach((f, i) => {
+                    setTimeout(() => this.playNote(f, 2.4, 0.13), i * 95);
+                });
+            }
+
+            playFinale() {
+                if (!this.ctx || STATE.muted) return;
+                [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+                    setTimeout(() => this.playNote(f, 4.2, 0.17), i * 110);
+                });
+            }
+
+            playFirework() {
+                if (!this.ctx || STATE.muted) return;
+                const t = this.ctx.currentTime;
+                const len = Math.floor(this.ctx.sampleRate * 0.45);
+                const buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+                const d = buf.getChannelData(0);
+                for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.09));
+                const src = this.ctx.createBufferSource();
+                src.buffer = buf;
+                const filt = this.ctx.createBiquadFilter();
+                filt.type = 'bandpass';
+                filt.frequency.value = 360 + Math.random() * 440;
+                const g = this.ctx.createGain();
+                g.gain.setValueAtTime(0.18, t);
+                g.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+                src.connect(filt);
+                filt.connect(g);
+                g.connect(this.master);
+                src.start(t);
+            }
+        }
+        const sound = new SoundEngine();
+
+        // ============================================================
+        // 4. THREE.JS SCENE & ZERO-LAG RENDERER
+        // ============================================================
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x1f0e24, 0.0068);
+
+        const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 480);
+        camera.position.set(0, 2.2, 4.5);
+
+        const renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            powerPreference: 'high-performance',
+            stencil: false
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.16;
+        container.appendChild(renderer.domElement);
+
+        let frameCounter = 0;
+        let fpsTimer = 0;
+        let lowFpsStrikes = 0;
+
+        function setQualityMode(mode) {
+            STATE.qualityMode = mode;
+            const btn = document.getElementById('btn-gfx');
+            if (mode === 'smooth') {
+                renderer.setPixelRatio(1.0);
+                petalMesh.count = 110;
+                skyLanternMesh.count = 45;
+                fireflyMesh.count = 80;
+                btn.textContent = 'Grafik: Akıcı';
+                btn.classList.replace('text-emerald-200', 'text-amber-200');
+            } else {
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+                petalMesh.count = PETAL_MAX;
+                skyLanternMesh.count = LANTERN_MAX;
+                fireflyMesh.count = FIREFLY_MAX;
+                btn.textContent = 'Grafik: Ultra';
+                btn.classList.replace('text-amber-200', 'text-emerald-200');
+            }
+        }
+        document.getElementById('btn-gfx').addEventListener('click', () => {
+            setQualityMode(STATE.qualityMode === 'ultra' ? 'smooth' : 'ultra');
+        });
+
+        // ============================================================
+        // 5. SKY DOME, AURORA BOREALIS & SHOOTING STARS
+        // ============================================================
+        const skyMat = new THREE.ShaderMaterial({
+            side: THREE.BackSide,
+            depthWrite: false,
+            uniforms: {
+                uProgress: { value: 0.0 },
+                uTime: { value: 0.0 }
+            },
+            vertexShader: `
+                varying vec3 vDir;
+                void main() {
+                    vDir = normalize(position);
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform float uProgress;
+                uniform float uTime;
+                varying vec3 vDir;
+                void main() {
+                    float h = clamp(vDir.y, 0.0, 1.0);
+                    vec3 topDay = vec3(0.12, 0.06, 0.25);
+                    vec3 topNight = vec3(0.015, 0.012, 0.055);
+                    vec3 midDay = vec3(0.52, 0.15, 0.36);
+                    vec3 midNight = vec3(0.08, 0.035, 0.17);
+                    vec3 horDay = vec3(1.0, 0.54, 0.32);
+                    vec3 horNight = vec3(0.32, 0.10, 0.28);
+
+                    vec3 col = mix(mix(horDay, horNight, uProgress), mix(midDay, midNight, uProgress), smoothstep(0.0, 0.26, h));
+                    col = mix(col, mix(topDay, topNight, uProgress), smoothstep(0.22, 0.85, h));
+
+                    vec3 sunDir = normalize(vec3(0.0, 0.12, -1.0));
+                    float sunAmt = max(dot(vDir, sunDir), 0.0);
+                    float sunFade = 1.0 - uProgress * 0.72;
+                    col += vec3(1.0, 0.82, 0.48) * pow(sunAmt, 14.0) * 0.78 * sunFade;
+                    col += vec3(1.0, 0.95, 0.82) * pow(sunAmt, 160.0) * 1.45 * sunFade;
+
+                    // Aurora Borealis Ribbons
+                    float auroraVis = smoothstep(0.25, 0.75, uProgress) * smoothstep(0.12, 0.52, h) * (1.0 - smoothstep(0.65, 0.95, h));
+                    float w1 = sin(vDir.x * 7.5 + uTime * 0.45 + sin(vDir.z * 4.0) * 1.5);
+                    float w2 = cos(vDir.x * 11.5 - uTime * 0.35 + vDir.y * 6.0);
+                    float ribbon = smoothstep(0.32, 0.95, w1 * 0.5 + w2 * 0.5);
+                    vec3 auroraCol = mix(vec3(0.12, 0.96, 0.68), vec3(0.68, 0.24, 0.96), sin(vDir.x * 3.0 + uTime * 0.2) * 0.5 + 0.5);
+                    col += auroraCol * ribbon * auroraVis * 0.46;
+
+                    gl_FragColor = vec4(col, 1.0);
+                }
+            `
+        });
+        scene.add(new THREE.Mesh(new THREE.SphereGeometry(330, 28, 20), skyMat));
+
+        const starCount = 1500;
+        const starGeo = new THREE.BufferGeometry();
+        const starPos = new Float32Array(starCount * 3);
+        for (let i = 0; i < starCount; i++) {
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.random() * Math.PI * 0.48;
+            const r = 305;
+            starPos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+            starPos[i * 3 + 1] = r * Math.cos(phi) + 8;
+            starPos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+        }
+        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+        const starMat = new THREE.PointsMaterial({ color: 0xfff5fc, size: 1.05, transparent: true, opacity: 0.5 });
+        scene.add(new THREE.Points(starGeo, starMat));
+
+        const shootingStars = [];
+        const shootGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 7)]);
+        const shootMat = new THREE.LineBasicMaterial({ color: 0xfff3d1, transparent: true, opacity: 0.95 });
+        for (let i = 0; i < 4; i++) {
+            const line = new THREE.Line(shootGeo, shootMat);
+            line.visible = false;
+            scene.add(line);
+            shootingStars.push({ mesh: line, active: false, timer: 3 + i * 4, vel: new THREE.Vector3() });
+        }
+
+        function spawnShootingStar() {
+            const s = shootingStars.find(item => !item.active) || shootingStars[0];
+            s.active = true;
+            s.mesh.visible = true;
+            s.mesh.position.set((Math.random() - 0.5) * 160, 70 + Math.random() * 45, -170 - Math.random() * 90);
+            s.vel.set((Math.random() - 0.5) * 70, -34 - Math.random() * 22, 42);
+            s.mesh.lookAt(s.mesh.position.clone().add(s.vel));
+        }
+
+        // ============================================================
+        // 6. BIOLUMINESCENT GERSTNER-STYLE OCEAN SHADER
+        // ============================================================
+        scene.add(new THREE.HemisphereLight(0xffb8d9, 0x160c28, 1.05));
+        const dirLight = new THREE.DirectionalLight(0xffa06b, 2.0);
+        dirLight.position.set(0, 22, -180);
+        scene.add(dirLight);
+
+        const waterGeo = new THREE.PlaneGeometry(460, 460, 96, 96);
+        waterGeo.rotateX(-Math.PI / 2);
+        const waterMat = new THREE.ShaderMaterial({
+            uniforms: {
+                uTime: { value: 0 },
+                uProgress: { value: 0 },
+                uCamPos: { value: camera.position },
+                uFlash: { value: 0 },
+                uFlashColor: { value: new THREE.Color(0xff4d88) }
+            },
+            vertexShader: `
+                uniform float uTime;
+                varying vec3 vWorldPos;
+                varying vec3 vNormal;
+                void main() {
+                    vec3 p = position;
+                    float w1 = sin(p.x * 0.18 + p.z * 0.1 + uTime * 1.45) * 0.14;
+                    float w2 = cos(p.x * 0.11 - p.z * 0.21 + uTime * 1.15) * 0.12;
+                    float w3 = sin(p.x * 0.45 + p.z * 0.38 - uTime * 2.2) * 0.045;
+                    p.y += w1 + w2 + w3;
+
+                    float dx = cos(p.x * 0.18 + p.z * 0.1 + uTime * 1.45) * 0.025 - sin(p.x * 0.11 - p.z * 0.21 + uTime * 1.15) * 0.013;
+                    float dz = cos(p.x * 0.18 + p.z * 0.1 + uTime * 1.45) * 0.014 + sin(p.x * 0.11 - p.z * 0.21 + uTime * 1.15) * 0.025;
+                    vNormal = normalize(vec3(-dx, 1.0, -dz));
+
+                    vec4 wp = modelMatrix * vec4(p, 1.0);
+                    vWorldPos = wp.xyz;
+                    gl_Position = projectionMatrix * viewMatrix * wp;
+                }
+            `,
+            fragmentShader: `
+                uniform float uTime;
+                uniform float uProgress;
+                uniform vec3 uCamPos;
+                uniform float uFlash;
+                uniform vec3 uFlashColor;
+                varying vec3 vWorldPos;
+                varying vec3 vNormal;
+                void main() {
+                    vec3 viewDir = normalize(uCamPos - vWorldPos);
+                    vec3 n = normalize(vNormal);
+                    float fresnel = pow(1.0 - max(dot(viewDir, n), 0.0), 4.0);
+
+                    vec3 deep = vec3(0.03, 0.05, 0.13);
+                    vec3 shallow = mix(vec3(0.24, 0.10, 0.28), vec3(0.07, 0.18, 0.34), uProgress);
+                    vec3 col = mix(deep, shallow, fresnel);
+
+                    // Zone 2 Bioluminescent Koi Lagoon Glow (z: -24 to -54)
+                    float bioZone = smoothstep(-20.0, -32.0, vWorldPos.z) * (1.0 - smoothstep(-48.0, -60.0, vWorldPos.z));
+                    float bioWave = sin(vWorldPos.x * 0.32 + uTime * 1.5) * cos(vWorldPos.z * 0.32 - uTime * 1.2) * 0.5 + 0.5;
+                    col += vec3(0.05, 0.82, 0.88) * bioZone * (0.20 + bioWave * 0.16) * (0.35 + fresnel);
+
+                    // Shoreline Foam Shimmer near pier
+                    float pierEdge = smoothstep(3.8, 2.7, abs(vWorldPos.x)) * smoothstep(8.0, -142.0, vWorldPos.z);
+                    float foam = smoothstep(0.55, 0.9, sin(vWorldPos.z * 1.8 + uTime * 2.5) * 0.5 + 0.5);
+                    col += vec3(0.75, 0.88, 1.0) * pierEdge * foam * 0.16;
+
+                    vec3 sunDir = normalize(vec3(0.0, 0.15, -1.0));
+                    vec3 hVec = normalize(sunDir + viewDir);
+                    float spec = pow(max(dot(n, hVec), 0.0), 100.0);
+                    col += vec3(1.0, 0.68, 0.45) * spec * (1.8 - uProgress * 0.8);
+
+                    float nearPier = exp(-abs(vWorldPos.x) * 0.15) * smoothstep(8.0, -145.0, vWorldPos.z);
+                    col += vec3(1.0, 0.52, 0.25) * nearPier * 0.16;
+                    col += uFlashColor * uFlash * 0.35 * fresnel;
+
+                    float dist = length(uCamPos - vWorldPos);
+                    float fog = smoothstep(55.0, 230.0, dist);
+                    vec3 fogCol = mix(vec3(0.13, 0.06, 0.15), vec3(0.04, 0.02, 0.09), uProgress);
+                    col = mix(col, fogCol, fog);
+
+                    gl_FragColor = vec4(col, 1.0);
+                }
+            `
+        });
+        const ocean = new THREE.Mesh(waterGeo, waterMat);
+        ocean.position.y = -0.35;
+        scene.add(ocean);
+
+        // ============================================================
+        // 7. 5 THEMATIC ZONES ARCHITECTURE (BATCHED INSTANCED MESHES)
+        // ============================================================
+        const woodMat = new THREE.MeshStandardMaterial({ color: 0x5c3621, roughness: 0.72, metalness: 0.08 });
+        const darkTimberMat = new THREE.MeshStandardMaterial({ color: 0x2b170e, roughness: 0.85 });
+        const crystalDeckMat = new THREE.MeshPhysicalMaterial({
+            color: 0x99f3ff,
+            emissive: 0x0a3d4d,
+            roughness: 0.12,
+            metalness: 0.1,
+            transparent: true,
+            opacity: 0.82
+        });
+        const starBridgeMat = new THREE.MeshPhysicalMaterial({
+            color: 0xffd6e7,
+            emissive: 0x4d0d2e,
+            roughness: 0.15,
+            transparent: true,
+            opacity: 0.85
+        });
+        const marbleMat = new THREE.MeshStandardMaterial({ color: 0xf7f0f2, roughness: 0.25, metalness: 0.12 });
+        const goldMat = new THREE.MeshStandardMaterial({ color: 0xffd166, emissive: 0x593a00, roughness: 0.25, metalness: 0.85 });
+        const lanternGlowMat = new THREE.MeshBasicMaterial({ color: 0xffd98e });
+        const blackRosePetalMat = new THREE.MeshPhysicalMaterial({
+            color: 0x0b070e,
+            emissive: 0x260516,
+            emissiveIntensity: 0.55,
+            roughness: 0.32,
+            metalness: 0.22,
+            clearcoat: 0.75,
+            clearcoatRoughness: 0.2,
+            side: THREE.DoubleSide
+        });
+        const sakuraPinkMat = new THREE.MeshStandardMaterial({ color: 0xff9ebb, emissive: 0x591830, roughness: 0.6 });
+        const leafGreenMat = new THREE.MeshStandardMaterial({ color: 0x13381e, roughness: 0.75 });
+
+        // Helper to build a sculpted 3D Velvety Black Rose (Siyah Gül)
+        function create3DBlackRose(scale = 1.0) {
+            const roseGroup = new THREE.Group();
+            // Stem
+            const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.022, 0.95, 7), leafGreenMat);
+            stem.position.y = 0.475;
+            roseGroup.add(stem);
+
+            // Side Leaves
+            [-1, 1].forEach((dir, idx) => {
+                const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), leafGreenMat);
+                leaf.scale.set(1.5, 0.2, 0.8);
+                leaf.position.set(dir * 0.11, 0.42 + idx * 0.14, 0);
+                leaf.rotation.z = dir * 0.45;
+                roseGroup.add(leaf);
+            });
+
+            // Flower Head with 3 concentric rings of cupped obsidian-black petals
+            const head = new THREE.Group();
+            head.position.y = 0.96;
+
+            // Inner bud
+            const bud = new THREE.Mesh(new THREE.ConeGeometry(0.065, 0.16, 10), blackRosePetalMat);
+            bud.position.y = 0.04;
+            head.add(bud);
+
+            const rings = [
+                { count: 5, radius: 0.065, tilt: 0.32, pScale: [0.09, 0.14, 0.02] },
+                { count: 7, radius: 0.105, tilt: 0.62, pScale: [0.12, 0.16, 0.02] },
+                { count: 9, radius: 0.145, tilt: 0.95, pScale: [0.14, 0.17, 0.02] }
+            ];
+            rings.forEach((r, rIdx) => {
+                for (let i = 0; i < r.count; i++) {
+                    const ang = (i / r.count) * Math.PI * 2 + rIdx * 0.4;
+                    const petalPivot = new THREE.Group();
+                    petalPivot.rotation.y = ang;
+                    const petal = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 8, 0, Math.PI), blackRosePetalMat);
+                    petal.scale.set(r.pScale[0], r.pScale[1], r.pScale[2]);
+                    petal.position.set(0, 0.02, r.radius);
+                    petal.rotation.x = r.tilt;
+                    petalPivot.add(petal);
+                    head.add(petalPivot);
+                }
+            });
+
+            roseGroup.add(head);
+            roseGroup.scale.setScalar(scale);
+            return roseGroup;
+        }
+
+        const dummy = new THREE.Object3D();
+
+        // Wooden Planks for Zone 1 (6..-25), Zone 3 (-54..-82), Zone 4 (-82..-110)
+        const plankGeo = new THREE.BoxGeometry(5.4, 0.16, 0.62);
+        const plankZs = [];
+        for (let z = 6; z >= -24.5; z -= 0.68) plankZs.push(z);
+        for (let z = -54.5; z >= -109.5; z -= 0.68) plankZs.push(z);
+
+        const woodPlankInst = new THREE.InstancedMesh(plankGeo, woodMat, plankZs.length);
+        plankZs.forEach((z, i) => {
+            dummy.position.set(0, 0.35, z);
+            dummy.rotation.set(0, 0, 0);
+            dummy.scale.set(1, 1, 1);
+            dummy.updateMatrix();
+            woodPlankInst.setMatrixAt(i, dummy.matrix);
+        });
+        scene.add(woodPlankInst);
+
+        // Zone 2 Crystal Moonlight Bridge (z: -25 to -54)
+        const crystalDeck = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.18, 29.2), crystalDeckMat);
+        crystalDeck.position.set(0, 0.35, -39.5);
+        scene.add(crystalDeck);
+        [-2.55, 2.55].forEach(x => {
+            const edge = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.14, 29.2), new THREE.MeshBasicMaterial({ color: 0x48cae4 }));
+            edge.position.set(x, 0.46, -39.5);
+            scene.add(edge);
+        });
+
+        // Zone 5 Starlight Bridge (z: -110 to -132)
+        const starDeck = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.18, 22.2), starBridgeMat);
+        starDeck.position.set(0, 0.35, -121);
+        scene.add(starDeck);
+        [-2.55, 2.55].forEach(x => {
+            const edge = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.14, 22.2), new THREE.MeshBasicMaterial({ color: 0xff85a1 }));
+            edge.position.set(x, 0.46, -121);
+            scene.add(edge);
+        });
+
+        // Swimming Koi Fish under Zone 2 Crystal Lagoon (InstancedMesh)
+        const KOI_COUNT = 26;
+        const koiGeo = new THREE.ConeGeometry(0.18, 0.72, 6);
+        koiGeo.rotateX(Math.PI / 2);
+        const koiMesh = new THREE.InstancedMesh(koiGeo, new THREE.MeshBasicMaterial({ color: 0xff9e5e }), KOI_COUNT);
+        const koiData = [];
+        for (let i = 0; i < KOI_COUNT; i++) {
+            koiData.push({
+                cx: (Math.random() - 0.5) * 16,
+                cz: -27 - Math.random() * 25,
+                rx: 2.0 + Math.random() * 4.2,
+                rz: 2.0 + Math.random() * 4.2,
+                speed: (0.45 + Math.random() * 0.5) * (Math.random() > 0.5 ? 1 : -1),
+                phase: Math.random() * 6.28
+            });
+        }
+        scene.add(koiMesh);
+
+        // Pier Posts & Lanterns (InstancedMesh)
+        const postZs = [];
+        for (let z = 4; z >= -130; z -= 6) postZs.push(z);
+        const totalPosts = postZs.length * 2;
+        const postInst = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.1, 0.12, 1.9, 8), darkTimberMat, totalPosts);
+        const lanternInst = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.15, 0.12, 0.34, 6), lanternGlowMat, totalPosts);
+        let pIdx = 0;
+        postZs.forEach((z) => {
+            [-2.48, 2.48].forEach((x) => {
+                dummy.position.set(x, 1.2, z);
+                dummy.rotation.set(0, 0, 0);
+                dummy.scale.set(1, 1, 1);
+                dummy.updateMatrix();
+                postInst.setMatrixAt(pIdx, dummy.matrix);
+
+                dummy.position.set(x, 2.28, z);
+                dummy.updateMatrix();
+                lanternInst.setMatrixAt(pIdx, dummy.matrix);
+                pIdx++;
+            });
+        });
+        scene.add(postInst, lanternInst);
+
+        // 5 Strategic PointLights (1 per zone for ultra performance)
+        [-12, -39.5, -68, -96, -121].forEach((lz, i) => {
+            const cols = [0xff9e54, 0x48cae4, 0xffbe55, 0xff4d88, 0xffd166];
+            const pl = new THREE.PointLight(cols[i], 2.7, 24);
+            pl.position.set(0, 2.7, lz);
+            scene.add(pl);
+        });
+
+        // Zone 1 Cherry Blossom Trees
+        [-8, -20].forEach((tz) => {
+            [-4.8, 4.8].forEach((tx) => {
+                const tree = new THREE.Group();
+                tree.position.set(tx, 0.1, tz);
+                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.32, 3.4, 7), darkTimberMat);
+                trunk.position.y = 1.7;
+                const c1 = new THREE.Mesh(new THREE.IcosahedronGeometry(1.75, 1), sakuraPinkMat);
+                c1.position.set(0, 3.8, 0);
+                const c2 = new THREE.Mesh(new THREE.IcosahedronGeometry(1.3, 1), sakuraPinkMat);
+                c2.position.set(tx > 0 ? -0.9 : 0.9, 3.3, 0.4);
+                tree.add(trunk, c1, c2);
+                scene.add(tree);
+            });
+        });
+
+        // Zone 4 Black Rose Arches (Siyah Gül Kemerleri)
+        [-84, -96, -108].forEach((az) => {
+            const arch = new THREE.Group();
+            arch.position.set(0, 0.35, az);
+            const hoop = new THREE.Mesh(new THREE.TorusGeometry(2.55, 0.14, 8, 28, Math.PI), leafGreenMat);
+            hoop.position.y = 2.1;
+            arch.add(hoop);
+            [-2.55, 2.55].forEach(px => {
+                const col = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 2.15, 8), leafGreenMat);
+                col.position.set(px, 1.05, 0);
+                arch.add(col);
+            });
+            for (let i = 0; i <= 14; i++) {
+                const a = (i / 14) * Math.PI;
+                const rose = new THREE.Mesh(new THREE.DodecahedronGeometry(0.15, 1), i % 3 === 0 ? lanternGlowMat : blackRosePetalMat);
+                rose.position.set(Math.cos(a) * 2.55, 2.1 + Math.sin(a) * 2.55, 0);
+                arch.add(rose);
+            }
+            scene.add(arch);
+        });
+
+        // Golden Gate to Infinity Gazebo (z = -131.5)
+        const gateGroup = new THREE.Group();
+        gateGroup.position.set(0, 0.35, -131.5);
+        scene.add(gateGroup);
+
+        const gateArch = new THREE.Mesh(new THREE.TorusGeometry(2.6, 0.18, 10, 32, Math.PI), goldMat);
+        gateArch.position.y = 2.4;
+        gateGroup.add(gateArch);
+        [-2.6, 2.6].forEach(gx => {
+            const p = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 2.5, 10), marbleMat);
+            p.position.set(gx, 1.25, 0);
+            gateGroup.add(p);
+        });
+        const gateDoorL = new THREE.Mesh(new THREE.BoxGeometry(2.3, 2.3, 0.1), new THREE.MeshBasicMaterial({ color: 0xffc2d1, transparent: true, opacity: 0.45 }));
+        gateDoorL.position.set(-1.18, 1.25, 0);
+        const gateDoorR = new THREE.Mesh(new THREE.BoxGeometry(2.3, 2.3, 0.1), new THREE.MeshBasicMaterial({ color: 0xffc2d1, transparent: true, opacity: 0.45 }));
+        gateDoorR.position.set(1.18, 1.25, 0);
+        gateGroup.add(gateDoorL, gateDoorR);
+
+        // ============================================================
+        // 8. GRAND FINALE GAZEBO, GIANT HEART, RING BOX & 3D SKY BANNER
+        // ============================================================
+        const GAZEBO_Z = -140.5;
+        const gazebo = new THREE.Group();
+        gazebo.position.set(0, 0.35, GAZEBO_Z);
+        scene.add(gazebo);
+
+        const deckStep = new THREE.Mesh(new THREE.CylinderGeometry(8.5, 8.8, 0.22, 12), marbleMat);
+        deckStep.position.y = 0.05;
+        const deckMain = new THREE.Mesh(new THREE.CylinderGeometry(7.7, 7.9, 0.25, 12), marbleMat);
+        deckMain.position.y = 0.25;
+        gazebo.add(deckStep, deckMain);
+
+        for (let i = 0; i < 8; i++) {
+            const ang = (i / 8) * Math.PI * 2 + Math.PI / 8;
+            if (Math.abs(Math.sin(ang)) < 0.45 && Math.cos(ang) > 0) continue;
+            const cx = Math.sin(ang) * 6.6;
+            const cz = Math.cos(ang) * 6.6;
+            const col = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.21, 5.2, 10), marbleMat);
+            col.position.set(cx, 2.8, cz);
+            const cap = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 8), goldMat);
+            cap.position.set(cx, 5.45, cz);
+            gazebo.add(col, cap);
+        }
+
+        const domeRing = new THREE.Mesh(new THREE.TorusGeometry(6.6, 0.18, 10, 44), goldMat);
+        domeRing.rotation.x = Math.PI / 2;
+        domeRing.position.y = 5.45;
+        gazebo.add(domeRing);
+
+        // 3D Glowing Holographic Sky-Text Banner Above Final Gazebo
+        const skyTextCanvas = document.createElement('canvas');
+        skyTextCanvas.width = 1536;
+        skyTextCanvas.height = 256;
+        const skyCtx = skyTextCanvas.getContext('2d');
+        const skyTextTex = new THREE.CanvasTexture(skyTextCanvas);
+        const skyBannerMesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(18, 3.0),
+            new THREE.MeshBasicMaterial({ map: skyTextTex, transparent: true, side: THREE.DoubleSide, depthWrite: false })
+        );
+        skyBannerMesh.position.set(0, 7.8, -1.5);
+        gazebo.add(skyBannerMesh);
+
+        function redrawSkyBanner() {
+            skyCtx.clearRect(0, 0, skyTextCanvas.width, skyTextCanvas.height);
+            const unlockedWords = ORB_WORDS_UPPER.slice(0, STATE.activeOrbIndex);
+            if (unlockedWords.length === 0) {
+                skyTextTex.needsUpdate = true;
+                return;
+            }
+            const text = unlockedWords.join('  ✦  ') + (unlockedWords.length === 5 ? ' ❤️' : ' ...');
+            skyCtx.save();
+            skyCtx.font = '900 76px "Cinzel Decorative", "Cormorant Garamond", serif';
+            skyCtx.textAlign = 'center';
+            skyCtx.textBaseline = 'middle';
+            skyCtx.shadowColor = '#ff2e63';
+            skyCtx.shadowBlur = 32;
+            skyCtx.fillStyle = '#fff5e4';
+            skyCtx.fillText(text, skyTextCanvas.width / 2, skyTextCanvas.height / 2);
+            skyCtx.shadowColor = '#ffd166';
+            skyCtx.shadowBlur = 14;
+            skyCtx.fillText(text, skyTextCanvas.width / 2, skyTextCanvas.height / 2);
+            skyCtx.restore();
+            skyTextTex.needsUpdate = true;
+        }
+        redrawSkyBanner();
+
+        // Giant Ruby Crystal Heart
+        function buildCrystalHeart() {
+            const shape = new THREE.Shape();
+            const x = 0, y = 0;
+            shape.moveTo(x + 0.5, y + 0.5);
+            shape.bezierCurveTo(x + 0.5, y + 0.5, x + 0.4, y, x, y);
+            shape.bezierCurveTo(x - 0.6, y, x - 0.6, y + 0.7, x - 0.6, y + 0.7);
+            shape.bezierCurveTo(x - 0.6, y + 1.1, x - 0.3, y + 1.54, x + 0.5, y + 1.9);
+            shape.bezierCurveTo(x + 1.2, y + 1.54, x + 1.6, y + 1.1, x + 1.6, y + 0.7);
+            shape.bezierCurveTo(x + 1.6, y + 0.7, x + 1.6, y, x + 1.0, y);
+            shape.bezierCurveTo(x + 0.7, y, x + 0.5, y + 0.5, x + 0.5, y + 0.5);
+
+            const geo = new THREE.ExtrudeGeometry(shape, {
+                depth: 0.45,
+                bevelEnabled: true,
+                bevelSegments: 4,
+                steps: 1,
+                bevelSize: 0.18,
+                bevelThickness: 0.18
+            });
+            geo.center();
+            geo.rotateZ(Math.PI);
+
+            const mat = new THREE.MeshPhysicalMaterial({
+                color: 0xff1e56,
+                emissive: 0xd9043d,
+                emissiveIntensity: 0.95,
+                roughness: 0.08,
+                metalness: 0.15,
+                clearcoat: 1.0
+            });
+            return new THREE.Mesh(geo, mat);
+        }
+
+        const giantHeart = buildCrystalHeart();
+        giantHeart.position.set(0, 3.65, -1.0);
+        gazebo.add(giantHeart);
+
+        const heartOrbitRing = new THREE.Mesh(new THREE.TorusGeometry(2.2, 0.025, 8, 56), goldMat);
+        heartOrbitRing.position.copy(giantHeart.position);
+        gazebo.add(heartOrbitRing);
+
+        const heartPointLight = new THREE.PointLight(0xff3b7f, 4.8, 25);
+        heartPointLight.position.set(0, 3.65, -1.0);
+        gazebo.add(heartPointLight);
+
+        // ============================================================
+        // FINALE ROMANTIC ALTAR: 3D BLACK ROSES + 3D LAVIVA CHOCOLATE + RING BOX
+        // ============================================================
+        const altarGroup = new THREE.Group();
+        altarGroup.position.set(0, 0.37, -1.0);
+        gazebo.add(altarGroup);
+
+        // Sculpted Marble & Gold Showcase Table
+        const tableBase = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.92, 0.16, 20), marbleMat);
+        tableBase.position.y = 0.08;
+        const tablePillar = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.36, 0.95, 16), marbleMat);
+        tablePillar.position.y = 0.62;
+        const tableTop = new THREE.Mesh(new THREE.CylinderGeometry(1.42, 1.36, 0.14, 28), marbleMat);
+        tableTop.position.y = 1.14;
+        const tableGoldTrim = new THREE.Mesh(new THREE.TorusGeometry(1.42, 0.028, 8, 48), goldMat);
+        tableGoldTrim.rotation.x = Math.PI / 2;
+        tableGoldTrim.position.y = 1.14;
+        altarGroup.add(tableBase, tablePillar, tableTop, tableGoldTrim);
+
+        // Dedicated Spotlight illuminating the Black Roses, Laviva Chocolate & Ring
+        const altarLight = new THREE.PointLight(0xffe6f0, 3.2, 8);
+        altarLight.position.set(0, 2.35, 0.55);
+        altarGroup.add(altarLight);
+
+        // 1) CENTER: Velvet Ring Box with Solitaire Diamond
+        const ringBox = new THREE.Group();
+        ringBox.position.set(0, 1.29, 0.38);
+        altarGroup.add(ringBox);
+
+        const velvetMat = new THREE.MeshStandardMaterial({ color: 0x3a0618, roughness: 0.88 });
+        ringBox.add(new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.15, 0.46), velvetMat));
+
+        const lidPivot = new THREE.Group();
+        lidPivot.position.set(0, 0.075, -0.23);
+        const lidMesh = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.11, 0.46), velvetMat);
+        lidMesh.position.set(0, 0.055, 0.23);
+        lidPivot.add(lidMesh);
+        ringBox.add(lidPivot);
+
+        const goldBand = new THREE.Mesh(new THREE.TorusGeometry(0.095, 0.018, 8, 22), goldMat);
+        goldBand.position.set(0, 0.12, 0);
+        const solitaireDiamond = new THREE.Mesh(
+            new THREE.OctahedronGeometry(0.062, 0),
+            new THREE.MeshBasicMaterial({ color: 0xffffff })
+        );
+        solitaireDiamond.position.set(0, 0.23, 0);
+        ringBox.add(goldBand, solitaireDiamond);
+
+        // 2) LEFT: Crystal Vase & Bouquet of 3D Velvety Black Roses (Siyah Gül Buketi)
+        const roseVaseGroup = new THREE.Group();
+        roseVaseGroup.position.set(-0.66, 1.21, -0.05);
+        altarGroup.add(roseVaseGroup);
+
+        const vaseMat = new THREE.MeshPhysicalMaterial({
+            color: 0x1a0b1e,
+            emissive: 0x1f0514,
+            roughness: 0.12,
+            metalness: 0.35,
+            clearcoat: 1.0
+        });
+        const vaseBody = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.15, 0.46, 18), vaseMat);
+        vaseBody.position.y = 0.23;
+        const vaseGoldRing = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.018, 8, 24), goldMat);
+        vaseGoldRing.rotation.x = Math.PI / 2;
+        vaseGoldRing.position.y = 0.45;
+        roseVaseGroup.add(vaseBody, vaseGoldRing);
+
+        // 7 Sculpted 3D Black Roses arranged in the bouquet
+        const bouquetAngles = [
+            { rx: 0.0, rz: 0.0, s: 1.08, y: 0.28 },
+            { rx: 0.28, rz: 0.18, s: 0.96, y: 0.24 },
+            { rx: -0.26, rz: 0.22, s: 0.95, y: 0.24 },
+            { rx: 0.24, rz: -0.25, s: 0.94, y: 0.23 },
+            { rx: -0.28, rz: -0.20, s: 0.96, y: 0.24 },
+            { rx: 0.36, rz: 0.0, s: 0.88, y: 0.20 },
+            { rx: -0.35, rz: 0.04, s: 0.90, y: 0.20 }
+        ];
+        bouquetAngles.forEach((b) => {
+            const r = create3DBlackRose(b.s);
+            r.position.y = b.y;
+            r.rotation.set(b.rx, Math.random() * Math.PI, b.rz);
+            roseVaseGroup.add(r);
+        });
+
+        // Also place 6 upright 3D Black Roses framing the perimeter of the Final Gazebo!
+        for (let i = 0; i < 6; i++) {
+            const ang = (i / 6) * Math.PI * 2 + 0.35;
+            const gx = Math.sin(ang) * 4.4;
+            const gz = Math.cos(ang) * 4.4;
+            const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.28, 0.7, 12), marbleMat);
+            stand.position.set(gx, 0.72, gz - 1.0);
+            const bigRose = create3DBlackRose(1.65);
+            bigRose.position.set(gx, 1.05, gz - 1.0);
+            gazebo.add(stand, bigRose);
+        }
+
+        // 3) RIGHT: 3D LAVIVA CHOCOLATE BAR + OPEN WRAPPER & WAFER-FILLED CHOCOLATE SQUARES
+        const lavivaGroup = new THREE.Group();
+        lavivaGroup.position.set(0.66, 1.21, 0.02);
+        lavivaGroup.rotation.y = -0.32;
+        altarGroup.add(lavivaGroup);
+
+        // Golden Serving Plate for Laviva
+        const chocoPlate = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.40, 0.03, 24), goldMat);
+        chocoPlate.position.y = 0.015;
+        lavivaGroup.add(chocoPlate);
+
+        // High-res Canvas Texture for authentic "LAVIVA" Wrapper
+        const lavivaCanvas = document.createElement('canvas');
+        lavivaCanvas.width = 512;
+        lavivaCanvas.height = 256;
+        const lvCtx = lavivaCanvas.getContext('2d');
+
+        // Rich signature Laviva purple-magenta & chocolate gradient background
+        const lvGrad = lvCtx.createLinearGradient(0, 0, 512, 256);
+        lvGrad.addColorStop(0, '#3b0944');
+        lvGrad.addColorStop(0.5, '#6a1268');
+        lvGrad.addColorStop(1, '#2b0729');
+        lvCtx.fillStyle = lvGrad;
+        lvCtx.fillRect(0, 0, 512, 256);
+
+        // Golden decorative border & swirl
+        lvCtx.strokeStyle = '#ffd166';
+        lvCtx.lineWidth = 10;
+        lvCtx.strokeRect(14, 14, 484, 228);
+
+        lvCtx.fillStyle = 'rgba(255, 209, 102, 0.16)';
+        lvCtx.beginPath();
+        lvCtx.ellipse(256, 128, 210, 78, -0.08, 0, Math.PI * 2);
+        lvCtx.fill();
+
+        // Bold "LAVIVA" Typography
+        lvCtx.save();
+        lvCtx.font = '900 84px "Plus Jakarta Sans", Arial, sans-serif';
+        lvCtx.textAlign = 'center';
+        lvCtx.textBaseline = 'middle';
+        lvCtx.shadowColor = '#1a0318';
+        lvCtx.shadowBlur = 14;
+        lvCtx.fillStyle = '#ffd166';
+        lvCtx.fillText('LAVIVA', 256, 122);
+        lvCtx.font = 'bold 22px "Plus Jakarta Sans", Arial, sans-serif';
+        lvCtx.fillStyle = '#ffe5ec';
+        lvCtx.fillText('ÇİKOLATA & GOFRET', 256, 182);
+        lvCtx.restore();
+
+        const lavivaTex = new THREE.CanvasTexture(lavivaCanvas);
+        const lavivaWrapMat = new THREE.MeshStandardMaterial({
+            map: lavivaTex,
+            roughness: 0.26,
+            metalness: 0.35
+        });
+        const lavivaSideMat = new THREE.MeshStandardMaterial({
+            color: 0x4a0e4e,
+            roughness: 0.3,
+            metalness: 0.4
+        });
+
+        // Main 3D Laviva Chocolate Bar tilted slightly on a display stand
+        const barPivot = new THREE.Group();
+        barPivot.position.set(0, 0.14, -0.08);
+        barPivot.rotation.x = 0.32;
+        const lavivaBar = new THREE.Mesh(
+            new THREE.BoxGeometry(0.64, 0.08, 0.30),
+            [lavivaSideMat, lavivaSideMat, lavivaWrapMat, lavivaSideMat, lavivaSideMat, lavivaSideMat]
+        );
+        // Zig-zag crimped wrapper ends
+        const crimpL = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.02, 0.31), goldMat);
+        crimpL.position.x = -0.34;
+        const crimpR = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.02, 0.31), goldMat);
+        crimpR.position.x = 0.34;
+        barPivot.add(lavivaBar, crimpL, crimpR);
+        lavivaGroup.add(barPivot);
+
+        // Unwrapped 3D Milk-Chocolate Laviva Squares on Gold Foil in front
+        const foilSheet = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.01, 0.22), goldMat);
+        foilSheet.position.set(0, 0.035, 0.18);
+        lavivaGroup.add(foilSheet);
+
+        const chocoMat = new THREE.MeshStandardMaterial({ color: 0x3d1c0c, roughness: 0.24, metalness: 0.1 });
+        [-0.12, 0.0, 0.12].forEach((cx, idx) => {
+            const piece = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.055, 0.13), chocoMat);
+            piece.position.set(cx, 0.068 + (idx === 1 ? 0.045 : 0), 0.18);
+            if (idx === 1) piece.rotation.z = 0.25;
+            lavivaGroup.add(piece);
+        });
+        const lockedOrbMat = new THREE.MeshStandardMaterial({
+            color: 0x99aabb,
+            emissive: 0x223344,
+            emissiveIntensity: 0.5,
+            roughness: 0.3
+        });
+        const domeShieldMat = new THREE.MeshBasicMaterial({
+            color: 0x8ecae6,
+            transparent: true,
+            opacity: 0.22,
+            wireframe: true
+        });
+        const guideBeamMat = new THREE.MeshBasicMaterial({
+            color: 0xffd166,
+            transparent: true,
+            opacity: 0.18,
+            side: THREE.DoubleSide,
+            depthWrite: false
+        });
+
+        // Vertical Golden Guide Beam (moves to whichever orb is currently active)
+        const guideBeam = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.9, 28, 16, 1, true), guideBeamMat);
+        guideBeam.position.set(0, 14.5, orbZs[0]);
+        scene.add(guideBeam);
+
+        // Ground Guiding Light Arrow / Ring on the pier pointing toward the next orb
+        const compassRing = new THREE.Mesh(new THREE.RingGeometry(0.55, 0.72, 24), new THREE.MeshBasicMaterial({ color: 0xffd166, side: THREE.DoubleSide }));
+        compassRing.rotation.x = -Math.PI / 2;
+        compassRing.position.set(0, 0.46, orbZs[0]);
+        scene.add(compassRing);
+
+        orbZs.forEach((oz, idx) => {
+            const g = new THREE.Group();
+            g.position.set(0, 0.35, oz);
+
+            // Marble Shrine Pedestal
+            const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.48, 0.85, 12), marbleMat);
+            ped.position.y = 0.42;
+            const ringBase = new THREE.Mesh(new THREE.TorusGeometry(0.45, 0.03, 8, 24), goldMat);
+            ringBase.rotation.x = Math.PI / 2;
+            ringBase.position.y = 0.86;
+
+            // Floating Crystal Orb
+            const core = new THREE.Mesh(new THREE.OctahedronGeometry(0.36, 1), idx === 0 ? activeOrbMat : lockedOrbMat);
+            core.position.y = 1.48;
+
+            const halo = new THREE.Mesh(new THREE.TorusGeometry(0.58, 0.025, 6, 30), goldMat);
+            halo.position.y = 1.48;
+
+            // Protective Crystal Dome (visible while locked)
+            const dome = new THREE.Mesh(new THREE.SphereGeometry(0.72, 14, 10), domeShieldMat);
+            dome.position.y = 1.48;
+            dome.visible = idx !== 0;
+
+            // Floating Word Label Sprite above Shrine
+            const lblCanvas = document.createElement('canvas');
+            lblCanvas.width = 512;
+            lblCanvas.height = 128;
+            const lCtx = lblCanvas.getContext('2d');
+            const lTex = new THREE.CanvasTexture(lblCanvas);
+            const lblSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: lTex, transparent: true }));
+            lblSprite.position.set(0, 2.45, 0);
+            lblSprite.scale.set(2.8, 0.7, 1);
+
+            function drawOrbLabel(unlocked, isNext) {
+                lCtx.clearRect(0, 0, 512, 128);
+                lCtx.font = 'bold 52px "Cormorant Garamond", serif';
+                lCtx.textAlign = 'center';
+                lCtx.textBaseline = 'middle';
+                if (unlocked) {
+                    lCtx.shadowColor = '#ff2e63';
+                    lCtx.shadowBlur = 18;
+                    lCtx.fillStyle = '#ffd166';
+                    lCtx.fillText(`✦ ${ORB_WORDS[idx]} ✦`, 256, 64);
+                } else if (isNext) {
+                    lCtx.shadowColor = '#ffd166';
+                    lCtx.shadowBlur = 16;
+                    lCtx.fillStyle = '#ffffff';
+                    lCtx.fillText(`✨ ${idx + 1}. Küreye Dokun ✨`, 256, 64);
+                } else {
+                    lCtx.fillStyle = 'rgba(255,255,255,0.45)';
+                    lCtx.fillText(`🔒 ${idx + 1}. Küre`, 256, 64);
+                }
+                lTex.needsUpdate = true;
+            }
+            drawOrbLabel(false, idx === 0);
+
+            g.add(ped, ringBase, core, halo, dome, lblSprite);
+            scene.add(g);
+
+            sequentialOrbs.push({
+                index: idx,
+                z: oz,
+                group: g,
+                core,
+                halo,
+                dome,
+                drawOrbLabel,
+                collected: false
+            });
+        });
+
+        // 3 Interactive Wish Lantern Pedestals along the pier
+        const wishPedestalZs = [-22, -76, -104];
+        const wishPedestals = [];
+        wishPedestalZs.forEach((wz, idx) => {
+            const wx = idx % 2 === 0 ? 1.65 : -1.65;
+            const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.34, 1.0, 10), marbleMat);
+            stand.position.set(wx, 0.85, wz);
+            scene.add(stand);
+
+            const lantern = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.24, 0.18, 0.48, 8),
+                new THREE.MeshBasicMaterial({ color: 0xffbe55 })
+            );
+            lantern.position.set(wx, 1.65, wz);
+            scene.add(lantern);
+
+            wishPedestals.push({ x: wx, z: wz, lantern, launched: false, vy: 0 });
+        });
+
+        // ============================================================
+        // 10. INSTANCED PETALS (BLACK & CRIMSON VELVET), SKY LANTERNS & FIREFLIES
+        // ============================================================
+        const PETAL_MAX = 220;
+        const petalMesh = new THREE.InstancedMesh(
+            new THREE.PlaneGeometry(0.15, 0.19),
+            new THREE.MeshBasicMaterial({ color: 0x1a0918, side: THREE.DoubleSide }),
+            PETAL_MAX
+        );
+        const petals = [];
+        for (let i = 0; i < PETAL_MAX; i++) {
+            petals.push({
+                x: (Math.random() - 0.5) * 24,
+                y: 0.5 + Math.random() * 10,
+                z: 6 - Math.random() * 150,
+                vy: 0.3 + Math.random() * 0.45,
+                phase: Math.random() * 6.28,
+                rot: (Math.random() - 0.5) * 3
+            });
+        }
+        scene.add(petalMesh);
+
+        const LANTERN_MAX = 95;
+        const skyLanternMesh = new THREE.InstancedMesh(
+            new THREE.CylinderGeometry(0.32, 0.24, 0.62, 6, 1, true),
+            new THREE.MeshBasicMaterial({ color: 0xffb347, side: THREE.DoubleSide, transparent: true, opacity: 0.9 }),
+            LANTERN_MAX
+        );
+        const skyLanterns = [];
+        for (let i = 0; i < LANTERN_MAX; i++) {
+            skyLanterns.push({
+                x: (Math.random() - 0.5) * 95,
+                y: 3 + Math.random() * 48,
+                z: -25 - Math.random() * 150,
+                vy: 0.45 + Math.random() * 0.7,
+                phase: Math.random() * 6.28,
+                scale: 0.7 + Math.random() * 0.65
+            });
+        }
+        scene.add(skyLanternMesh);
+
+        const FIREFLY_MAX = 160;
+        const fireflyMesh = new THREE.InstancedMesh(
+            new THREE.OctahedronGeometry(0.08, 0),
+            new THREE.MeshBasicMaterial({ color: 0xffe8a3 }),
+            FIREFLY_MAX
+        );
+        const fireflies = [];
+        for (let i = 0; i < FIREFLY_MAX; i++) {
+            fireflies.push({
+                x: (Math.random() - 0.5) * 26,
+                y: 0.5 + Math.random() * 4.5,
+                z: 4 - Math.random() * 145,
+                phase: Math.random() * 6.28,
+                speed: 0.8 + Math.random() * 1.4
+            });
+        }
+        scene.add(fireflyMesh);
+
+        // Celebration Burst Particles
+        const bursts = [];
+        function spawnWordBurst(x, y, z) {
+            const count = 70;
+            const pos = new Float32Array(count * 3);
+            const vels = [];
+            for (let i = 0; i < count; i++) {
+                pos[i * 3] = x;
+                pos[i * 3 + 1] = y;
+                pos[i * 3 + 2] = z;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                const spd = 2.5 + Math.random() * 5.5;
+                vels.push(new THREE.Vector3(
+                    Math.sin(phi) * Math.cos(theta) * spd,
+                    Math.cos(phi) * spd + 1.5,
+                    Math.sin(phi) * Math.sin(theta) * spd
+                ));
+            }
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({ color: 0xffd166, size: 0.35, transparent: true, opacity: 1, blending: THREE.AdditiveBlending });
+            const pts = new THREE.Points(geo, mat);
+            scene.add(pts);
+            bursts.push({ pts, vels, age: 0, maxAge: 1.5 });
+        }
+
+        // ============================================================
+        // 11. THIRD-PERSON LUMINOUS SPIRIT AVATAR
+        // ============================================================
+        const avatarGroup = new THREE.Group();
+        avatarGroup.visible = false;
+        const avatarCore = new THREE.Mesh(new THREE.SphereGeometry(0.28, 12, 12), new THREE.MeshBasicMaterial({ color: 0xffe5ec }));
+        avatarCore.position.y = 1.05;
+        const avatarAura = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.025, 8, 24), goldMat);
+        avatarAura.rotation.x = Math.PI / 2;
+        avatarAura.position.y = 0.42;
+        avatarGroup.add(avatarCore, avatarAura);
+        scene.add(avatarGroup);
+
+        // ============================================================
+        // 12. 3D CELEBRATION FIREWORKS
+        // ============================================================
+        const fireworks = [];
+        function launchFirework() {
+            const colors = [0xff2e63, 0xffd166, 0x48cae4, 0xff8fa3, 0xb5179e, 0xffffff];
+            const colHex = colors[Math.floor(Math.random() * colors.length)];
+            const ox = (Math.random() - 0.5) * 42;
+            const oy = 12 + Math.random() * 12;
+            const oz = GAZEBO_Z - 14 - Math.random() * 24;
+
+            const count = 85;
+            const pos = new Float32Array(count * 3);
+            const vels = [];
+            for (let i = 0; i < count; i++) {
+                pos[i * 3] = ox;
+                pos[i * 3 + 1] = oy;
+                pos[i * 3 + 2] = oz;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                const spd = 4.5 + Math.random() * 8;
+                vels.push(new THREE.Vector3(
+                    Math.sin(phi) * Math.cos(theta) * spd,
+                    Math.cos(phi) * spd,
+                    Math.sin(phi) * Math.sin(theta) * spd
+                ));
+            }
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({ color: colHex, size: 0.55, transparent: true, opacity: 1, blending: THREE.AdditiveBlending });
+            const pts = new THREE.Points(geo, mat);
+            scene.add(pts);
+            fireworks.push({ pts, vels, age: 0, maxAge: 2.1 });
+
+            waterMat.uniforms.uFlashColor.value.setHex(colHex);
+            waterMat.uniforms.uFlash.value = 1.0;
+            sound.playFirework();
+        }
+
+        // ============================================================
+        // 13. PLAYER CONTROLS, TOUCH JOYSTICK & SEQUENTIAL ORB LOGIC
+        // ============================================================
+        const player = {
+            pos: new THREE.Vector3(0, 2.15, 4.5),
+            yaw: 0,
+            pitch: 0.02,
+            bob: 0
+        };
+
+        const keys = {};
+        window.addEventListener('keydown', (e) => {
+            keys[e.code] = true;
+            if (e.code === 'KeyE' && STATE.started && !STATE.proposalReached) {
+                triggerNearbyWishLantern();
+            }
+        });
+        window.addEventListener('keyup', (e) => { keys[e.code] = false; });
+
+        let draggingLook = false;
+        let lastPtr = { x: 0, y: 0 };
+        renderer.domElement.addEventListener('pointerdown', (e) => {
+            if (!STATE.started || STATE.proposalReached) return;
+            draggingLook = true;
+            lastPtr = { x: e.clientX, y: e.clientY };
+        });
+        window.addEventListener('pointermove', (e) => {
+            if (!draggingLook || STATE.proposalReached) return;
+            const dx = e.clientX - lastPtr.x;
+            const dy = e.clientY - lastPtr.y;
+            lastPtr = { x: e.clientX, y: e.clientY };
+            player.yaw -= dx * 0.0038;
+            player.pitch = THREE.MathUtils.clamp(player.pitch - dy * 0.003, -0.45, 0.55);
+        });
+        window.addEventListener('pointerup', () => { draggingLook = false; });
+
+        // Mobile Touch Joystick
+        const joyZone = document.getElementById('joystick-zone');
+        const joyKnob = document.getElementById('joystick-knob');
+        let joyVec = { x: 0, y: 0 };
+        let joyId = null;
+
+        joyZone.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            const t = e.changedTouches[0];
+            joyId = t.identifier;
+            moveJoy(t);
+        }, { passive: false });
+
+        joyZone.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            for (let t of e.changedTouches) if (t.identifier === joyId) moveJoy(t);
+        }, { passive: false });
+
+        const endJoy = (e) => {
+            for (let t of e.changedTouches) {
+                if (t.identifier === joyId) {
+                    joyId = null;
+                    joyVec = { x: 0, y: 0 };
+                    joyKnob.style.transform = 'translate(0px, 0px)';
+                }
+            }
+        };
+        joyZone.addEventListener('touchend', endJoy);
+        joyZone.addEventListener('touchcancel', endJoy);
+
+        function moveJoy(t) {
+            const r = joyZone.getBoundingClientRect();
+            const cx = r.left + r.width / 2;
+            const cy = r.top + r.height / 2;
+            const maxR = r.width / 2 - 18;
+            let dx = t.clientX - cx;
+            let dy = t.clientY - cy;
+            const d = Math.hypot(dx, dy);
+            if (d > maxR) { dx = (dx / d) * maxR; dy = (dy / d) * maxR; }
+            joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+            joyVec.x = dx / maxR;
+            joyVec.y = dy / maxR;
+        }
+
+        // Dramatic Center-Screen Word & Love Letter Reveal
+        const revealEl = document.getElementById('dramatic-reveal');
+        const revealInner = document.getElementById('reveal-inner');
+        const revealStepTag = document.getElementById('reveal-step-tag');
+        // Dramatic Center-Screen Word Reveal (ONLY THE SINGLE WORD, NO EXTRA SUBTITLE)
+        const revealEl = document.getElementById('dramatic-reveal');
+        const revealInner = document.getElementById('reveal-inner');
+        const revealBigWord = document.getElementById('reveal-big-word');
+
+        function triggerSequentialOrbCollection(idx) {
+            const orb = sequentialOrbs[idx];
+            if (!orb || orb.collected) return;
+            orb.collected = true;
+            STATE.activeOrbIndex = idx + 1;
+
+            sound.playWordUnlock(idx);
+            spawnWordBurst(0, 1.85, orb.z);
+            orb.drawOrbLabel(true, false);
+
+            // Update Top HUD Sentence Pill
+            const pill = document.getElementById(`pill-${idx}`);
+            if (pill) {
+                pill.classList.remove('active-target');
+                pill.classList.add('unlocked');
+            }
+            const nextPill = document.getElementById(`pill-${idx + 1}`);
+            if (nextPill) nextPill.classList.add('active-target');
+
+            // Unlock next orb visually & move guiding beam
+            if (STATE.activeOrbIndex < sequentialOrbs.length) {
+                const nextOrb = sequentialOrbs[STATE.activeOrbIndex];
+                nextOrb.core.material = activeOrbMat;
+                nextOrb.dome.visible = false;
+                nextOrb.drawOrbLabel(false, true);
+                guideBeam.position.z = nextOrb.z;
+                compassRing.position.z = nextOrb.z;
+            } else {
+                // All 5 words unlocked! Point beam to the Infinity Gazebo
+                guideBeam.position.z = GAZEBO_Z;
+                compassRing.position.z = GAZEBO_Z;
+            }
+
+            // Update 3D Sky Banner above Final Gazebo
+            redrawSkyBanner();
+
+            // Trigger Dramatic Center-Screen Kinetic Word Reveal (ONLY THE WORD)
+            revealBigWord.textContent = ORB_WORDS_UPPER[idx];
+
+            revealEl.classList.remove('hidden');
+            revealInner.classList.remove('animate-word-reveal');
+            void revealInner.offsetWidth;
+            revealInner.classList.add('animate-word-reveal');
+
+            if (STATE.revealTimer) clearTimeout(STATE.revealTimer);
+            STATE.revealTimer = setTimeout(() => {
+                revealEl.classList.add('hidden');
+            }, 4850);
+        }
+
+        const lockToast = document.getElementById('lock-toast');
+        function showLockWarning() {
+            lockToast.classList.remove('opacity-0');
+            if (STATE.lockToastTimer) clearTimeout(STATE.lockToastTimer);
+            STATE.lockToastTimer = setTimeout(() => lockToast.classList.add('opacity-0'), 2200);
+        }
+
+        // ============================================================
+        // 14. UI HANDLERS & CUSTOMIZATION MODAL
+        // ============================================================
+        document.getElementById('btn-start').addEventListener('click', () => {
+            sound.init();
+            STATE.started = true;
+            const ss = document.getElementById('start-screen');
+            ss.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => ss.classList.add('hidden'), 700);
+            document.getElementById('hud-top').classList.remove('opacity-0');
+            document.getElementById('controls-hint').classList.remove('opacity-0');
+            document.getElementById('btn-shooting-star').classList.remove('hidden');
+            joyZone.classList.add('show-mobile');
+        });
+
+        document.getElementById('btn-cam-mode').addEventListener('click', (e) => {
+            STATE.thirdPerson = !STATE.thirdPerson;
+            avatarGroup.visible = STATE.thirdPerson;
+            e.target.textContent = STATE.thirdPerson ? 'Kamera: 3. Şahıs' : 'Kamera: 1. Şahıs';
+        });
+
+        document.getElementById('btn-autowalk').addEventListener('click', () => {
+            STATE.autoWalk = !STATE.autoWalk;
+            document.getElementById('autowalk-dot').className = STATE.autoWalk
+                ? 'w-2 h-2 rounded-full bg-emerald-400'
+                : 'w-2 h-2 rounded-full bg-pink-300';
+            document.getElementById('autowalk-text').textContent = STATE.autoWalk ? 'Yürüyor...' : 'Oto-Yürü';
+        });
+
+        document.getElementById('btn-sound').addEventListener('click', () => {
+            STATE.muted = !STATE.muted;
+            sound.setMute(STATE.muted);
+            document.getElementById('ico-sound-on').classList.toggle('hidden', STATE.muted);
+            document.getElementById('ico-sound-off').classList.toggle('hidden', !STATE.muted);
+        });
+
+        document.getElementById('btn-shooting-star').addEventListener('click', () => {
+            spawnShootingStar();
+            sound.playWishLaunch();
+        });
+
+        // Wish Lantern Launch
+        const btnWish = document.getElementById('btn-wish-lantern');
+        let activeWishPedestal = null;
+        function triggerNearbyWishLantern() {
+            if (!activeWishPedestal || activeWishPedestal.launched) return;
+            activeWishPedestal.launched = true;
+            activeWishPedestal.vy = 2.5;
+            btnWish.classList.add('hidden');
+            sound.playWishLaunch();
+            spawnWordBurst(activeWishPedestal.x, 1.8, activeWishPedestal.z);
+        }
+        btnWish.addEventListener('click', triggerNearbyWishLantern);
+
+        // Customization Modal
+        const customModal = document.getElementById('custom-modal');
+        const inpTo = document.getElementById('inp-to');
+        const inpQ = document.getElementById('inp-question');
+        const shareBox = document.getElementById('share-link-box');
+
+        function refreshShareURL() {
+            const payload = {};
+            if (inpTo.value.trim()) payload.to = inpTo.value.trim();
+            if (inpQ.value.trim()) payload.q = inpQ.value.trim();
+
+            const base = window.location.href.split('#')[0].split('?')[0];
+            shareBox.value = Object.keys(payload).length > 0 ? `${base}#d=${encodePayload(payload)}` : base;
+        }
+
+        document.getElementById('btn-open-custom').addEventListener('click', () => {
+            inpTo.value = CONFIG.toName;
+            inpQ.value = CONFIG.question;
+            refreshShareURL();
+            customModal.classList.remove('hidden');
+            customModal.classList.add('flex');
+        });
+
+        [inpTo, inpQ].forEach(el => el.addEventListener('input', refreshShareURL));
+
+        document.getElementById('btn-close-custom').addEventListener('click', () => {
+            customModal.classList.add('hidden');
+            customModal.classList.remove('flex');
+        });
+
+        document.getElementById('btn-apply-custom').addEventListener('click', () => {
+            CONFIG.toName = inpTo.value.trim();
+            CONFIG.question = inpQ.value.trim();
+
+            refreshShareURL();
+            window.history.replaceState(null, '', shareBox.value);
+            applyPersonalization();
+            customModal.classList.add('hidden');
+            customModal.classList.remove('flex');
+        });
+
+        document.getElementById('btn-copy-url').addEventListener('click', () => {
+            shareBox.select();
+            document.execCommand('copy');
+            const msg = document.getElementById('copy-msg');
+            msg.classList.remove('hidden');
+            setTimeout(() => msg.classList.add('hidden'), 2500);
+        });
+
+        // Proposal & Playful Dodging "Hayır" Button
+        const btnNo = document.getElementById('btn-no');
+        const btnYes = document.getElementById('btn-yes');
+        const noExcuses = [
+            "Emin misin? 🥺",
+            "Kalbim kırılır ama...",
+            "Yanlış tuşa bastın bence!",
+            "Lütfennnn ❤️",
+            "Bak yıldızlar bile 'Evet' diyor ✨",
+            "Kaçış yok, kalbim senin!"
+        ];
+
+        function dodgeNo() {
+            STATE.noCount++;
+            const rx = (Math.random() * 2 - 1) * Math.min(130, window.innerWidth * 0.28);
+            const ry = (Math.random() * 2 - 1) * 70 - 20;
+            const sc = Math.max(0.7, 1 - STATE.noCount * 0.05);
+            btnNo.style.transform = `translate(${rx}px, ${ry}px) scale(${sc})`;
+            btnNo.textContent = noExcuses[(STATE.noCount - 1) % noExcuses.length];
+
+            STATE.yesScale = Math.min(1.25, STATE.yesScale + 0.04);
+            btnYes.style.transform = `scale(${STATE.yesScale})`;
+        }
+
+        btnNo.addEventListener('mouseover', dodgeNo);
+        btnNo.addEventListener('touchstart', (e) => { e.preventDefault(); dodgeNo(); }, { passive: false });
+        btnNo.addEventListener('click', dodgeNo);
+
+        btnYes.addEventListener('click', () => {
+            if (STATE.saidYes) return;
+            STATE.saidYes = true;
+            sound.playFinale();
+
+            giantHeart.material.emissiveIntensity = 1.95;
+            heartPointLight.intensity = 9.5;
+            lanternGlowMat.color.setHex(0xff8fa3);
+
+            const propOv = document.getElementById('proposal-overlay');
+            propOv.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+            setTimeout(() => propOv.classList.add('hidden'), 500);
+
+            const celebOv = document.getElementById('celebration-overlay');
+            const celebCard = document.getElementById('celebration-card');
+            celebOv.classList.remove('hidden');
+            celebOv.classList.add('flex');
+            setTimeout(() => celebCard.classList.remove('scale-90', 'opacity-0'), 250);
+
+            launchFirework();
+            setTimeout(launchFirework, 300);
+            setInterval(() => {
+                launchFirework();
+                if (Math.random() > 0.4) setTimeout(launchFirework, 250);
+            }, 1100);
+        });
+
+        document.getElementById('btn-more-fw').addEventListener('click', launchFirework);
+
+        const celebCard = document.getElementById('celebration-card');
+        const btnRestore = document.getElementById('btn-restore-celeb');
+        document.getElementById('btn-toggle-celeb').addEventListener('click', () => {
+            celebCard.classList.add('opacity-0', 'pointer-events-none');
+            btnRestore.classList.remove('hidden');
+        });
+        btnRestore.addEventListener('click', () => {
+            celebCard.classList.remove('opacity-0', 'pointer-events-none');
+            btnRestore.classList.add('hidden');
+        });
+
+        // ============================================================
+        // 15. MAIN 60FPS ANIMATION LOOP
+        // ============================================================
+        const clock = new THREE.Clock();
+        const euler = new THREE.Euler(0, 0, 0, 'YXZ');
+        const targetOrbitPos = new THREE.Vector3();
+        let orbitTheta = 0;
+
+        const ZONE_NAMES = [
+            '1. Altın Gün Batımı & Kiraz Çiçekleri',
+            '2. Kristal Ay Işığı & Koi Göleti',
+            '3. Yüzen Dilek Fenerleri & Kuzey Işıkları',
+            '4. Kızıl Gül Kemerleri & Ateşböceği Korusu',
+            '5. Yıldız Geçidi & Sonsuzluk Köprüsü'
+        ];
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const dt = Math.min(clock.getDelta(), 0.05);
+            const t = clock.getElapsedTime();
+
+            // Adaptive FPS Governor
+            if (STATE.started && STATE.qualityMode === 'ultra') {
+                frameCounter++;
+                fpsTimer += dt;
+                if (fpsTimer >= 1.0) {
+                    if (frameCounter < 38) {
+                        lowFpsStrikes++;
+                        if (lowFpsStrikes >= 3) setQualityMode('smooth');
+                    } else {
+                        lowFpsStrikes = 0;
+                    }
+                    frameCounter = 0;
+                    fpsTimer = 0;
+                }
+            }
+
+            const progress = THREE.MathUtils.clamp((4.5 - player.pos.z) / 138.0, 0, 1);
+            skyMat.uniforms.uProgress.value = progress;
+            skyMat.uniforms.uTime.value = t;
+            waterMat.uniforms.uProgress.value = progress;
+            waterMat.uniforms.uTime.value = t;
+            waterMat.uniforms.uCamPos.value.copy(camera.position);
+            waterMat.uniforms.uFlash.value = Math.max(0, waterMat.uniforms.uFlash.value - dt * 2.0);
+            starMat.opacity = 0.45 + progress * 0.55;
+
+            // Update Zone HUD Badge
+            const newZone = progress < 0.22 ? 0 : progress < 0.44 ? 1 : progress < 0.66 ? 2 : progress < 0.86 ? 3 : 4;
+            if (newZone !== STATE.currentZone) {
+                STATE.currentZone = newZone;
+                document.getElementById('zone-badge').textContent = ZONE_NAMES[newZone];
+            }
+
+            // Shooting Stars
+            for (let i = 0; i < shootingStars.length; i++) {
+                const s = shootingStars[i];
+                s.timer -= dt;
+                if (!s.active && s.timer <= 0 && progress > 0.3) {
+                    s.active = true;
+                    s.mesh.visible = true;
+                    s.mesh.position.set((Math.random() - 0.5) * 180, 75 + Math.random() * 45, -180 - Math.random() * 80);
+                    s.vel.set((Math.random() - 0.5) * 65, -35 - Math.random() * 20, 40);
+                    s.mesh.lookAt(s.mesh.position.clone().add(s.vel));
+                } else if (s.active) {
+                    s.mesh.position.addScaledVector(s.vel, dt);
+                    if (s.mesh.position.y < 10) {
+                        s.active = false;
+                        s.mesh.visible = false;
+                        s.timer = 4 + Math.random() * 7;
+                    }
+                }
+            }
+
+            // Koi Fish in Zone 2
+            for (let i = 0; i < KOI_COUNT; i++) {
+                const k = koiData[i];
+                const ang = t * k.speed + k.phase;
+                dummy.position.set(k.cx + Math.cos(ang) * k.rx, -0.55, k.cz + Math.sin(ang) * k.rz);
+                dummy.rotation.set(0, -ang + (k.speed > 0 ? 0 : Math.PI), 0);
+                dummy.scale.set(1, 1, 1);
+                dummy.updateMatrix();
+                koiMesh.setMatrixAt(i, dummy.matrix);
+            }
+            koiMesh.instanceMatrix.needsUpdate = true;
+
+            // Guiding Beam & Compass Ring Pulse
+            guideBeam.rotation.y = t * 0.6;
+            const cScale = 0.85 + Math.sin(t * 4) * 0.18;
+            compassRing.scale.set(cScale, cScale, 1);
+
+            // 5 Sequential Orbs Animation & Proximity Check
+            for (let i = 0; i < sequentialOrbs.length; i++) {
+                const o = sequentialOrbs[i];
+                if (!o.collected) {
+                    const isNext = (i === STATE.activeOrbIndex);
+                    o.core.position.y = 1.48 + Math.sin(t * 2.6 + i) * (isNext ? 0.16 : 0.06);
+                    o.core.rotation.y += dt * (isNext ? 2.2 : 0.6);
+                    o.halo.position.y = o.core.position.y;
+                    o.halo.rotation.x = Math.PI / 3 + Math.sin(t + i) * 0.35;
+                    o.halo.rotation.y += dt * 1.5;
+
+                    if (STATE.started && Math.abs(player.pos.z - o.z) < 1.95 && Math.abs(player.pos.x) < 1.85) {
+                        if (isNext) {
+                            triggerSequentialOrbCollection(i);
+                        } else if (i > STATE.activeOrbIndex) {
+                            showLockWarning();
+                        }
+                    }
+                } else {
+                    o.core.position.y = 1.65 + Math.sin(t * 2 + i) * 0.08;
+                    o.core.rotation.y += dt * 1.2;
+                    o.halo.rotation.y += dt * 1.2;
+                }
+            }
+
+            // Golden Gate Opens once all 5 words ("Sana Bir Şey Diycem Lütfennnn") are unlocked!
+            if (STATE.activeOrbIndex >= 5) {
+                STATE.gateOpenProgress = THREE.MathUtils.lerp(STATE.gateOpenProgress, 1, dt * 1.8);
+                gateDoorL.position.x = -1.18 - STATE.gateOpenProgress * 1.3;
+                gateDoorR.position.x = 1.18 + STATE.gateOpenProgress * 1.3;
+                gateDoorL.material.opacity = 0.45 * (1 - STATE.gateOpenProgress);
+                gateDoorR.material.opacity = 0.45 * (1 - STATE.gateOpenProgress);
+            }
+
+            // 3 Interactive Wish Lantern Pedestals
+            let nearPedestal = null;
+            for (let i = 0; i < wishPedestals.length; i++) {
+                const wp = wishPedestals[i];
+                if (!wp.launched) {
+                    wp.lantern.position.y = 1.65 + Math.sin(t * 2 + i) * 0.07;
+                    if (STATE.started && !STATE.proposalReached && Math.abs(player.pos.z - wp.z) < 2.8) {
+                        nearPedestal = wp;
+                    }
+                } else if (wp.lantern.visible) {
+                    wp.lantern.position.y += wp.vy * dt;
+                    wp.lantern.position.x += Math.sin(t + i) * 0.4 * dt;
+                    if (wp.lantern.position.y > 65) wp.lantern.visible = false;
+                }
+            }
+            activeWishPedestal = nearPedestal;
+            btnWish.classList.toggle('hidden', !nearPedestal);
+
+            // Giant Ruby Heart & Opening Ring Box
+            giantHeart.rotation.y = Math.sin(t * 1.1) * 0.4 + (STATE.saidYes ? t * 0.7 : 0);
+            const pulse = 1.34 + Math.pow(Math.sin(t * 3.0), 4) * (STATE.saidYes ? 0.2 : 0.08);
+            giantHeart.scale.set(pulse, pulse, pulse);
+            giantHeart.position.y = 3.65 + Math.sin(t * 1.6) * 0.12;
+            heartOrbitRing.rotation.x = Math.PI / 3;
+            heartOrbitRing.rotation.y = t * 0.65;
+
+            if (STATE.proposalReached) {
+                STATE.ringBoxOpen = THREE.MathUtils.lerp(STATE.ringBoxOpen, 1, dt * 2.0);
+                lidPivot.rotation.x = -STATE.ringBoxOpen * (Math.PI * 0.58);
+                solitaireDiamond.rotation.y += dt * 2.4;
+            }
+
+            // Instanced Petals
+            const activePetals = petalMesh.count;
+            for (let i = 0; i < activePetals; i++) {
+                const p = petals[i];
+                p.y -= p.vy * dt * (STATE.saidYes ? 2.2 : 1.0);
+                if (p.y < 0.35) {
+                    p.y = 10.5;
+                    p.z = STATE.proposalReached
+                        ? GAZEBO_Z + (Math.random() - 0.5) * 16
+                        : player.pos.z - 3 - Math.random() * 28;
+                }
+                dummy.position.set(p.x + Math.sin(t * 1.4 + p.phase) * 0.8, p.y, p.z);
+                dummy.rotation.set(t * p.rot, t * p.rot * 0.6, p.phase);
+                dummy.scale.set(1, 1, 1);
+                dummy.updateMatrix();
+                petalMesh.setMatrixAt(i, dummy.matrix);
+            }
+            petalMesh.instanceMatrix.needsUpdate = true;
+
+            // Instanced Sky Lanterns
+            const activeLanterns = skyLanternMesh.count;
+            for (let i = 0; i < activeLanterns; i++) {
+                const sl = skyLanterns[i];
+                sl.y += sl.vy * dt * (STATE.saidYes ? 1.7 : 1.0);
+                if (sl.y > 54) sl.y = 3.0;
+                dummy.position.set(sl.x + Math.sin(t * 0.6 + sl.phase) * 1.2, sl.y, sl.z);
+                dummy.rotation.set(0, t * 0.3 + sl.phase, 0);
+                dummy.scale.setScalar(sl.scale);
+                dummy.updateMatrix();
+                skyLanternMesh.setMatrixAt(i, dummy.matrix);
+            }
+            skyLanternMesh.instanceMatrix.needsUpdate = true;
+
+            // Instanced Fireflies
+            const activeFireflies = fireflyMesh.count;
+            for (let i = 0; i < activeFireflies; i++) {
+                const ff = fireflies[i];
+                const sc = 0.5 + Math.sin(t * ff.speed * 3 + ff.phase) * 0.5;
+                dummy.position.set(ff.x, ff.y + Math.sin(t * ff.speed + ff.phase) * 0.35, ff.z);
+                dummy.rotation.set(0, t + ff.phase, 0);
+                dummy.scale.setScalar(Math.max(0.01, sc));
+                dummy.updateMatrix();
+                fireflyMesh.setMatrixAt(i, dummy.matrix);
+            }
+            fireflyMesh.instanceMatrix.needsUpdate = true;
+
+            // Update Burst Particles
+            for (let i = bursts.length - 1; i >= 0; i--) {
+                const b = bursts[i];
+                b.age += dt;
+                const posArr = b.pts.geometry.attributes.position.array;
+                for (let j = 0; j < b.vels.length; j++) {
+                    b.vels[j].y -= 2.2 * dt;
+                    posArr[j * 3] += b.vels[j].x * dt;
+                    posArr[j * 3 + 1] += b.vels[j].y * dt;
+                    posArr[j * 3 + 2] += b.vels[j].z * dt;
+                }
+                b.pts.geometry.attributes.position.needsUpdate = true;
+                b.pts.material.opacity = Math.max(0, 1 - b.age / b.maxAge);
+                if (b.age >= b.maxAge) {
+                    scene.remove(b.pts);
+                    b.pts.geometry.dispose();
+                    b.pts.material.dispose();
+                    bursts.splice(i, 1);
+                }
+            }
+
+            // Update Fireworks
+            for (let i = fireworks.length - 1; i >= 0; i--) {
+                const fw = fireworks[i];
+                fw.age += dt;
+                const posArr = fw.pts.geometry.attributes.position.array;
+                for (let j = 0; j < fw.vels.length; j++) {
+                    fw.vels[j].y -= 3.8 * dt;
+                    fw.vels[j].multiplyScalar(0.985);
+                    posArr[j * 3] += fw.vels[j].x * dt;
+                    posArr[j * 3 + 1] += fw.vels[j].y * dt;
+                    posArr[j * 3 + 2] += fw.vels[j].z * dt;
+                }
+                fw.pts.geometry.attributes.position.needsUpdate = true;
+                fw.pts.material.opacity = Math.max(0, 1 - fw.age / fw.maxAge);
+                if (fw.age >= fw.maxAge) {
+                    scene.remove(fw.pts);
+                    fw.pts.geometry.dispose();
+                    fw.pts.material.dispose();
+                    fireworks.splice(i, 1);
+                }
+            }
+
+            // Player Movement & Camera
+            if (!STATE.started) {
+                camera.position.set(Math.sin(t * 0.3) * 1.1, 2.35, 5.2);
+                camera.lookAt(0, 1.9, -28);
+            } else if (!STATE.proposalReached) {
+                let fwd = 0, str = 0;
+                if (keys['KeyW'] || keys['ArrowUp']) fwd += 1;
+                if (keys['KeyS'] || keys['ArrowDown']) fwd -= 1;
+                if (keys['KeyA'] || keys['ArrowLeft']) str -= 1;
+                if (keys['KeyD'] || keys['ArrowRight']) str += 1;
+                if (Math.abs(joyVec.y) > 0.08) fwd -= joyVec.y;
+                if (Math.abs(joyVec.x) > 0.08) str += joyVec.x;
+
+                if (STATE.autoWalk && fwd === 0 && str === 0) {
+                    fwd = 0.85;
+                    player.yaw = THREE.MathUtils.lerp(player.yaw, 0, dt * 2.5);
+                    player.pitch = THREE.MathUtils.lerp(player.pitch, 0.03, dt * 2.5);
+                }
+
+                const sprint = (keys['ShiftLeft'] || keys['ShiftRight']) ? 1.55 : 1.0;
+                const moveSpd = 5.7 * sprint;
+
+                if (Math.hypot(fwd, str) > 0.05) {
+                    const dx = -Math.sin(player.yaw) * fwd + Math.cos(player.yaw) * str;
+                    const dz = -Math.cos(player.yaw) * fwd - Math.sin(player.yaw) * str;
+                    const len = Math.hypot(dx, dz) || 1;
+                    player.pos.x += (dx / len) * moveSpd * dt;
+                    player.pos.z += (dz / len) * moveSpd * dt;
+
+                    // Prevent passing the Golden Gate until all 5 words are unlocked
+                    const minZ = STATE.activeOrbIndex < 5 ? -129.8 : GAZEBO_Z + 5.2;
+                    if (player.pos.z <= -129.8 && STATE.activeOrbIndex < 5) {
+                        showLockWarning();
+                    }
+
+                    player.pos.x = THREE.MathUtils.clamp(player.pos.x, -2.05, 2.05);
+                    player.pos.z = THREE.MathUtils.clamp(player.pos.z, minZ, 5.2);
+
+                    player.bob += dt * 9.5 * sprint;
+                    sound.stepAccum += dt * sprint;
+                    if (sound.stepAccum > 0.46) {
+                        sound.stepAccum = 0;
+                        sound.playStep();
+                    }
+                } else {
+                    player.bob = THREE.MathUtils.lerp(player.bob, 0, dt * 5);
+                }
+
+                avatarGroup.position.set(player.pos.x, 0.35 + Math.abs(Math.sin(player.bob)) * 0.08, player.pos.z);
+                avatarGroup.rotation.y = player.yaw;
+
+                if (STATE.thirdPerson) {
+                    const camDist = 3.6;
+                    camera.position.set(
+                        player.pos.x + Math.sin(player.yaw) * camDist,
+                        player.pos.y + 0.75 - player.pitch * 1.6,
+                        player.pos.z + Math.cos(player.yaw) * camDist
+                    );
+                    camera.lookAt(player.pos.x, 1.45, player.pos.z - 2.5);
+                } else {
+                    camera.position.set(player.pos.x, player.pos.y + Math.sin(player.bob) * 0.05, player.pos.z);
+                    euler.set(player.pitch, player.yaw, 0);
+                    camera.quaternion.setFromEuler(euler);
+                }
+
+                // Trigger Proposal Finale upon entering Infinity Gazebo
+                if (STATE.activeOrbIndex >= 5 && player.pos.z <= GAZEBO_Z + 6.8) {
+                    STATE.proposalReached = true;
+                    STATE.autoWalk = false;
+                    avatarGroup.visible = false;
+                    document.getElementById('hud-top').classList.add('opacity-0');
+                    document.getElementById('controls-hint').classList.add('opacity-0');
+                    document.getElementById('btn-shooting-star').classList.add('hidden');
+                    btnWish.classList.add('hidden');
+                    joyZone.classList.remove('show-mobile');
+                    revealEl.classList.add('hidden');
+
+                    const propOv = document.getElementById('proposal-overlay');
+                    const propCard = document.getElementById('proposal-card');
+                    propOv.classList.remove('hidden');
+                    propOv.classList.add('flex');
+                    setTimeout(() => propCard.classList.remove('translate-y-10', 'opacity-0'), 400);
+                }
+            } else {
+                // Smooth cinematic showcase framing Giant Heart, 3D Black Roses, 3D Laviva Chocolate & Ring Box
+                orbitTheta += dt * (STATE.saidYes ? 0.30 : 0.14);
+                const r = STATE.saidYes ? 6.2 : 4.2;
+                targetOrbitPos.set(
+                    Math.sin(orbitTheta) * r,
+                    STATE.saidYes ? 3.2 : 2.35,
+                    GAZEBO_Z + Math.cos(orbitTheta) * r
+                );
+                camera.position.lerp(targetOrbitPos, dt * 2.2);
+                camera.lookAt(0, 2.15, GAZEBO_Z - 1.0);
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    })();
+    </script>
+</body>
+</html>
